@@ -1,0 +1,86 @@
+{
+  "nodes": {
+    "Testcase": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "question_name": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "Question": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "editorial": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "Code": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "Testcase_gen": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "FInal": {
+      "variant_0": {
+        "inputs": {
+          "input4": []
+        },
+        "inputsValue": {}
+      }
+    },
+    "question_gen": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "editorial_gen": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "result": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "code_gen": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "testcase_rectify": {
+      "variant_0": {
+        "inputs": {
+          "code": []
+        }
+      }
+    },
+    "testcase_final_gen": {
+      "variant_0": {
+        "inputs": {
+          "question": []
+        }
+      }
+    }
+  }
+}

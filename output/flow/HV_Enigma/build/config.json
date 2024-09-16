@@ -1,0 +1,23 @@
+{
+    "flow_name": "flow",
+    "flow_inputs": {
+        "question": [
+            "The n-queens puzzle is the problem of placing n queens on a (n\u00d7n) chessboard such that no two queens can attack each other. Given an integer n, find all distinct solutions to the n-queens puzzle. Each solution contains distinct board configurations of the n-queens placement, where the solutions are a permutation of [1,2,3..n] in increasing order, here the number in the ith place denotes that the ith-column queen is placed in the row with that number. For eg below figure represents a chessboard [3 1 4 2].",
+            "string"
+        ],
+        "story": [
+            "Avantika is playing chess with Srey and wants t win. help her",
+            "string"
+        ],
+        "code": [
+            "class Solution{\npublic:\n\n    vector<vector<int>> ans;\n    \n    bool check(vector<vector<char>>& board , int i , int j){\n        int x = i , y = j;\n        // up\n        while(x >= 0){\n            if(board[x][y] == 'Q'){\n                return false;\n            }\n            x--;\n        }\n        // left diag up\n        x = i;\n        while(x >= 0 && y >= 0){\n            if(board[x][y] == 'Q') return false;\n            x--;\n            y--;\n        }\n        // right diag up\n        x = i , y = j;\n        while(x >= 0 && y < board.size()){\n            if(board[x][y] == 'Q') return false;\n            x--;\n            y++;\n        }\n        return true;\n    }\n    \n    void insertAns(vector<vector<char>>& board){\n        vector<int> row;\n        for(int i=0;i<board.size();i++){\n            for(int j=0;j<board.size();j++){\n                if(board[j][i] == 'Q'){\n                    row.push_back(j+1);\n                    break;\n                }\n            }\n        }\n        if(row.size() == board.size()){\n            ans.push_back(row);\n        }\n    }\n\n\n    void solve(vector<vector<char>> &board , int i , int n){\n        if(i >= n){\n            insertAns(board);\n            return;\n        }\n        \n        for(int j=0;j<board.size();j++){\n            if(check(board,i,j)){\n                board[i][j] = 'Q';\n                solve(board,i+1,n);\n                board[i][j] = '-';\n            }\n        }\n        \n    }\n\n    vector<vector<int>> nQueen(int n) {\n        vector<vector<char>> board(n,vector<char>(n,'-'));\n        solve(board,0,n);\n        sort(ans.begin(),ans.end());\n        return ans;\n    }\n};",
+            "string"
+        ]
+    },
+    "flow_path": "//workspaces/HV_Enigma//HV_Enigma/flow/HV_Enigma/build/flow/flow.dag.yaml",
+    "is_chat_flow": true,
+    "chat_history_input_name": "chat_history",
+    "label": "Chat",
+    "chat_output_name": "answer",
+    "is_streaming": true
+}

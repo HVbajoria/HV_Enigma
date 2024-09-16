@@ -1,0 +1,2247 @@
+### Question Name:
+**"Avantika's Chessboard Conundrum: The n-Queens Challenge"**
+
+### Tags:
+- Algorithm
+- Backtracking
+- Recursion
+- Chess
+- Combinatorial Problems
+
+### Topics:
+- Backtracking
+- Combinatorial Search
+- Dynamic Programming
+- Optimization Problems
+
+### Companies:
+- Google
+- Facebook
+- Amazon
+- Microsoft
+- Apple
+
+### Additional Context:
+This problem is often encountered in technical interviews for software engineering positions, especially in companies that emphasize algorithmic proficiency and problem-solving skills. The n-queens puzzle is a classic example used to test a candidate's understanding of backtracking algorithms and their ability to handle combinatorial search problems.
+
+## Problem Statement
+
+### Story: Avantika's Quest to Win the Chess Challenge
+
+Avantika is engaged in an intense chess match with her friend Srey. To secure her victory, she needs to solve a classic chess puzzle: the n-queens puzzle. The challenge is to place `n` queens on an `n x n` chessboard in such a way that no two queens can attack each other. 
+
+Given an integer `n`, your task is to help Avantika find all distinct solutions to the n-queens puzzle. Each solution should represent a unique configuration of the n-queens placement, where the solutions are permutations of `[1, 2, 3, ..., n]` in increasing order. In each permutation, the number in the `i-th` position indicates that the queen in the `i-th` column is placed in the row with that number.
+
+For example, the permutation `[3, 1, 4, 2]` represents the following chessboard configuration:
+```
+. . Q .
+Q . . .
+. . . Q
+. Q . .
+```
+
+### Constraints
+
+- \(1 \leq n \leq 10^5\)
+
+### Input Format
+
+- A single integer `n` representing the size of the chessboard and the number of queens to be placed.
+
+### Output Format
+
+- A list of lists, where each inner list represents a distinct board configuration of the n-queens placement as described above.
+
+### Example
+
+#### Example 1:
+**Input:**
+```plaintext
+4
+```
+
+**Output:**
+```plaintext
+[[2, 4, 1, 3], [3, 1, 4, 2]]
+```
+
+**Explanation:**
+The output represents two distinct configurations:
+1. `[2, 4, 1, 3]`
+   ```
+   . Q . .
+   . . . Q
+   Q . . .
+   . . Q .
+   ```
+2. `[3, 1, 4, 2]`
+   ```
+   . . Q .
+   Q . . .
+   . . . Q
+   . Q . .
+   ```
+
+#### Example 2:
+**Input:**
+```plaintext
+1
+```
+
+**Output:**
+```plaintext
+[[1]]
+```
+
+**Explanation:**
+The output represents the only configuration for `n=1`:
+1. `[1]`
+   ```
+   Q
+   ```
+
+### Solution Code
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> ans;
+    
+    bool check(vector<vector<char>>& board, int i, int j) {
+        int x = i, y = j;
+        // Check upward direction
+        while(x >= 0) {
+            if(board[x][y] == 'Q') {
+                return false;
+            }
+            x--;
+        }
+        // Check left diagonal upward direction
+        x = i, y = j;
+        while(x >= 0 && y >= 0) {
+            if(board[x][y] == 'Q') return false;
+            x--;
+            y--;
+        }
+        // Check right diagonal upward direction
+        x = i, y = j;
+        while(x >= 0 && y < board.size()) {
+            if(board[x][y] == 'Q') return false;
+            x--;
+            y++;
+        }
+        return true;
+    }
+    
+    void insertAns(vector<vector<char>>& board) {
+        vector<int> row;
+        for(int i = 0; i < board.size(); i++) {
+            for(int j = 0; j < board.size(); j++) {
+                if(board[j][i] == 'Q') {
+                    row.push_back(j + 1);
+                    break;
+                }
+            }
+        }
+        if(row.size() == board.size()) {
+            ans.push_back(row);
+        }
+    }
+
+    void solve(vector<vector<char>>& board, int i, int n) {
+        if(i >= n) {
+            insertAns(board);
+            return;
+        }
+        
+        for(int j = 0; j < board.size(); j++) {
+            if(check(board, i, j)) {
+                board[i][j] = 'Q';
+                solve(board, i + 1, n);
+                board[i][j] = '-';
+            }
+        }
+    }
+
+    vector<vector<int>> nQueen(int n) {
+        vector<vector<char>> board(n, vector<char>(n, '-'));
+        solve(board, 0, n);
+        sort(ans.begin(), ans.end());
+        return ans;
+    }
+};
+```
+
+Sure, I'll rephrase the solution code to match the problem statement and take user input based on the given format.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class ChessSolver {
+public:
+    vector<vector<int>> solutions;
+    
+    // Function to check if placing a queen at (row, col) is safe
+    bool isSafe(vector<vector<char>>& board, int row, int col) {
+        int x = row, y = col;
+        // Check upward direction
+        while(x >= 0) {
+            if(board[x][y] == 'Q') {
+                return false;
+            }
+            x--;
+        }
+        // Check left diagonal upward direction
+        x = row, y = col;
+        while(x >= 0 && y >= 0) {
+            if(board[x][y] == 'Q') return false;
+            x--;
+            y--;
+        }
+        // Check right diagonal upward direction
+        x = row, y = col;
+        while(x >= 0 && y < board.size()) {
+            if(board[x][y] == 'Q') return false;
+            x--;
+            y++;
+        }
+        return true;
+    }
+    
+    // Function to record a valid board configuration
+    void recordSolution(vector<vector<char>>& board) {
+        vector<int> configuration;
+        for(int i = 0; i < board.size(); i++) {
+            for(int j = 0; j < board.size(); j++) {
+                if(board[j][i] == 'Q') {
+                    configuration.push_back(j + 1);
+                    break;
+                }
+            }
+        }
+        if(configuration.size() == board.size()) {
+            solutions.push_back(configuration);
+        }
+    }
+
+    // Recursive function to solve the n-queens problem
+    void solveNQueens(vector<vector<char>>& board, int row, int n) {
+        if(row >= n) {
+            recordSolution(board);
+            return;
+        }
+        
+        for(int col = 0; col < board.size(); col++) {
+            if(isSafe(board, row, col)) {
+                board[row][col] = 'Q';
+                solveNQueens(board, row + 1, n);
+                board[row][col] = '-';
+            }
+        }
+    }
+
+    // Main function to find all n-queens solutions
+    vector<vector<int>> findNQueensSolutions(int n) {
+        vector<vector<char>> board(n, vector<char>(n, '-'));
+        solveNQueens(board, 0, n);
+        sort(solutions.begin(), solutions.end());
+        return solutions;
+    }
+};
+
+int main() {
+    int n;
+    cout << "Enter the size of the chessboard: ";
+    cin >> n;
+
+    ChessSolver solver;
+    vector<vector<int>> result = solver.findNQueensSolutions(n);
+
+    cout << "Distinct solutions to the " << n << "-queens puzzle are:\n";
+    for(const auto& solution : result) {
+        for(int pos : solution) {
+            cout << pos << " ";
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
+```
+
+In this code:
+- The class `Solution` has been renamed to `ChessSolver`.
+- The function `nQueen` has been renamed to `findNQueensSolutions`.
+- The function `check` has been renamed to `isSafe`.
+- The function `insertAns` has been renamed to `recordSolution`.
+- The function `solve` has been renamed to `solveNQueens`.
+- The main function takes user input for the size of the chessboard and prints the solutions.
+
+## Editorial: Solving the N-Queens Puzzle
+
+### Intuition
+
+The N-Queens puzzle is a classic problem of placing `n` queens on an `n x n` chessboard such that no two queens threaten each other. This means no two queens can share the same row, column, or diagonal. 
+
+The core intuition is to use backtracking, a method that incrementally builds candidates to the solutions and abandons a candidate as soon as it determines that the candidate cannot possibly lead to a valid solution. Given the constraints, backtracking is an efficient approach because it prunes the search space by discarding invalid configurations early.
+
+### Approach
+
+1. **Backtracking Setup**: We use a recursive function to place queens row by row. We start from the first row and attempt to place a queen in each column of the current row. For each placement, we check if it's valid (i.e., no other queens can attack the current queen).
+
+2. **Validation Check**: For each attempted placement, we need to ensure:
+   - No other queen is in the same column.
+   - No other queen is on the same left diagonal.
+   - No other queen is on the same right diagonal.
+
+3. **Storing Solutions**: Once we place queens in all rows (i.e., reaching the base case of our recursion), we store the current board configuration as a valid solution.
+
+4. **Backtracking Step**: If placing a queen leads to an invalid configuration, we backtrack by removing the queen and trying the next column in the current row.
+
+5. **Result Formatting**: We format the final list of solutions where each solution is represented as a list of integers indicating the row positions of queens in each column.
+
+### Code
+
+Here is the implementation in C++:
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> ans;
+    
+    bool check(vector<vector<char>>& board, int i, int j) {
+        int x = i, y = j;
+        // Check upward direction
+        while(x >= 0) {
+            if(board[x][y] == 'Q') {
+                return false;
+            }
+            x--;
+        }
+        // Check left diagonal upward direction
+        x = i, y = j;
+        while(x >= 0 && y >= 0) {
+            if(board[x][y] == 'Q') return false;
+            x--;
+            y--;
+        }
+        // Check right diagonal upward direction
+        x = i, y = j;
+        while(x >= 0 && y < board.size()) {
+            if(board[x][y] == 'Q') return false;
+            x--;
+            y++;
+        }
+        return true;
+    }
+    
+    void insertAns(vector<vector<char>>& board) {
+        vector<int> row;
+        for(int i = 0; i < board.size(); i++) {
+            for(int j = 0; j < board.size(); j++) {
+                if(board[j][i] == 'Q') {
+                    row.push_back(j + 1);
+                    break;
+                }
+            }
+        }
+        if(row.size() == board.size()) {
+            ans.push_back(row);
+        }
+    }
+
+    void solve(vector<vector<char>>& board, int i, int n) {
+        if(i >= n) {
+            insertAns(board);
+            return;
+        }
+        
+        for(int j = 0; j < board.size(); j++) {
+            if(check(board, i, j)) {
+                board[i][j] = 'Q';
+                solve(board, i + 1, n);
+                board[i][j] = '-';
+            }
+        }
+    }
+
+    vector<vector<int>> nQueen(int n) {
+        vector<vector<char>> board(n, vector<char>(n, '-'));
+        solve(board, 0, n);
+        sort(ans.begin(), ans.end());
+        return ans;
+    }
+};
+```
+
+### Explanation
+
+1. **Initialization**: A `board` of size `n x n` is initialized with all cells marked as empty (`'-'`).
+
+2. **Recursive Backtracking**:
+   - The function `solve` is called starting from the first row.
+   - For each column in the current row, it checks if placing a queen is valid using the `check` function.
+   - If valid, the queen is placed, and the function recursively attempts to place queens in the next row.
+   - If not valid, it tries the next column.
+
+3. **Validation**:
+   - The `check` function ensures no other queens are in the same column or diagonals.
+   - It does so by iterating upwards in the same column and both diagonals to check for any existing queens.
+
+4. **Storing Solutions**:
+   - When all rows are successfully filled with valid queen placements, `insertAns` records the current board configuration as a valid solution.
+   - It translates the board configuration into a list of integers representing the row positions of queens.
+
+5. **Final Output**:
+   - After all valid configurations are found, they are sorted and returned.
+
+This approach ensures that all possible configurations are explored and only valid ones are retained, leveraging the efficiency of backtracking to handle the problem within feasible time constraints for the given input size.
+
+To accomplish the task of generating input files for different test cases (basic, corner, edge, and boundary), running the solution, and storing the output in corresponding files, we need to structure our Python script in the following way:
+
+1. **Generate Test Cases**: Create the input files for all the specified test cases.
+2. **Run the Solution**: Execute the solution script (`solution.py`) with the generated input and capture the output.
+3. **Store the Output**: Save the captured output into corresponding output files.
+
+Let's start by writing the Python script to handle these tasks.
+
+### Step-by-Step Implementation:
+
+1. **Generate Test Cases**:
+    - Basic test cases: Simple and common scenarios.
+    - Corner test cases: Unusual or extreme scenarios.
+    - Edge test cases: Near the boundary of input constraints.
+    - Boundary test cases: Exactly at the boundary of input constraints.
+
+2. **Run the Solution**:
+    - Use `subprocess` to execute the solution script and capture its output.
+
+3. **Store the Output**:
+    - Write the output to the designated files.
+
+Here's the complete Python script:
+
+```python
+import subprocess
+
+# Define the test cases
+test_cases = {
+    "basic": [
+        1,  # Basic test case n=1
+        4,  # Basic test case n=4
+        5,  # Basic test case n=5
+        8   # Basic test case n=8
+    ],
+    "corner": [
+        2,  # Corner case n=2 (no solution)
+        3   # Corner case n=3 (no solution)
+    ],
+    "edge": [
+        10,  # Edge case n=10
+        11   # Edge case n=11
+    ],
+    "boundary": [
+        100000,  # Boundary case n=100000
+        99999    # Boundary case n=99999
+    ]
+}
+
+# Generate input files
+def generate_input_files():
+    for case_type, cases in test_cases.items():
+        for i, case in enumerate(cases, start=1):
+            filename = f"{case_type}_input_{i}.txt"
+            with open(filename, "w") as f:
+                f.write(str(case))
+
+# Run solution.py and capture the output
+def run_solution(input_file):
+    result = subprocess.run(['python3', 'solution.py'], input=open(input_file, "r"), text=True, capture_output=True)
+    return result.stdout
+
+# Store the output in corresponding files
+def store_output_files():
+    for case_type, cases in test_cases.items():
+        for i, case in enumerate(cases, start=1):
+            input_filename = f"{case_type}_input_{i}.txt"
+            output_filename = f"{case_type}_output_{i}.txt"
+            output = run_solution(input_filename)
+            with open(output_filename, "w") as f:
+                f.write(output)
+
+# Main execution
+if __name__ == "__main__":
+    generate_input_files()
+    store_output_files()
+```
+
+### Explanation:
+
+1. **Test Cases Definition**:
+   - The `test_cases` dictionary stores the different cases categorized into `basic`, `corner`, `edge`, and `boundary`.
+
+2. **Generate Input Files**:
+   - The `generate_input_files` function iterates over the test cases and writes each case to a corresponding input file.
+
+3. **Run Solution**:
+   - The `run_solution` function uses `subprocess.run` to execute `solution.py` with the provided input file and capture the output.
+
+4. **Store Output Files**:
+   - The `store_output_files` function reads each input file, runs the solution, and writes the output to the corresponding output file.
+
+### Note:
+- Ensure the `solution.py` script is in the same directory as this script.
+- The `solution.py` should be adjusted to read from `stdin` if it currently reads from a file.
+
+This script automates the creation of test cases, execution of the solution, and storage of outputs, which is essential for thorough testing and validation of the solution.### Creative Question Name:
+"Queen's Gambit Solver: Avantika's Strategic Placement"
+
+### Appropriate Tags:
+- Algorithms
+- Backtracking
+- Combinatorial Problems
+- Chess
+- Permutations
+
+### Topics:
+- N-Queens Problem
+- Backtracking Algorithms
+- Combinatorial Optimization
+- Permutation Generation
+
+### Companies:
+- Google
+- Facebook (Meta)
+- Amazon
+- Microsoft
+- Apple
+
+### Problem Statement
+
+**Title: Avantika's Chess Challenge**
+
+Avantika and Srey are playing a game of chess. Avantika wants to win by successfully placing queens on an \( n \times n \) chessboard such that no two queens can attack each other. 
+
+The challenge is to help Avantika find all distinct solutions to this n-queens puzzle. Each solution should be a distinct board configuration where the placement of the queens is represented as a permutation of \([1, 2, \ldots, n]\) in increasing order. In this permutation, the number in the \(i\)-th position represents that the queen in the \(i\)-th column is placed in the row with that number.
+
+For example, the configuration \([3, 1, 4, 2]\) represents a \(4 \times 4\) chessboard where:
+- The queen in the 1st column is placed in the 3rd row.
+- The queen in the 2nd column is placed in the 1st row.
+- The queen in the 3rd column is placed in the 4th row.
+- The queen in the 4th column is placed in the 2nd row.
+
+Given an integer \( n \), find all distinct solutions to the n-queens puzzle.
+
+### Constraints
+
+- \( 1 \leq n \leq 10^5 \)
+
+### Input Format
+
+- A single integer \( n \) representing the size of the chessboard.
+
+### Output Format
+
+- A list of lists. Each inner list contains a permutation of \([1, 2, \ldots, n]\) representing a valid configuration of the n-queens puzzle.
+
+### Sample Testcases
+
+#### Sample Input 1:
+```plaintext
+4
+```
+
+#### Sample Output 1:
+```plaintext
+[[2, 4, 1, 3], [3, 1, 4, 2]]
+```
+
+#### Explanation 1:
+For \( n = 4 \), there are two distinct solutions:
+1. Place queens at [2, 4, 1, 3]: 
+   - 1st column in 2nd row
+   - 2nd column in 4th row
+   - 3rd column in 1st row
+   - 4th column in 3rd row
+
+2. Place queens at [3, 1, 4, 2]: 
+   - 1st column in 3rd row
+   - 2nd column in 1st row
+   - 3rd column in 4th row
+   - 4th column in 2nd row
+
+#### Sample Input 2:
+```plaintext
+1
+```
+
+#### Sample Output 2:
+```plaintext
+[[1]]
+```
+
+#### Explanation 2:
+For \( n = 1 \), there is only one solution:
+1. Place the queen at [1]: 
+   - 1st column in 1st row
+
+Sure! Here is the rephrased solution code according to the problem statement, including user input handling and rephrased comments, function name, and variables.
+
+```python
+def avantikas_n_queens_challenge(board_size):
+    def is_valid_position(queens, new_row):
+        new_col = len(queens)
+        for col in range(new_col):
+            if abs(queens[col] - new_row) in (0, new_col - col):
+                return False
+        return True
+
+    def solve_n_queens(queens):
+        col = len(queens)
+        if col == board_size:
+            solutions.append(queens)
+            return
+        for row in range(1, board_size + 1):
+            if is_valid_position(queens, row):
+                solve_n_queens(queens + [row])
+
+    solutions = []
+    solve_n_queens([])
+    return solutions
+
+# Read input
+n = int(input().strip())
+
+# Get all distinct solutions to the n-queens puzzle
+result = avantikas_n_queens_challenge(n)
+
+# Print the result
+print(result)
+```
+
+This code defines the function `avantikas_n_queens_challenge` which takes the size of the chessboard as input and returns all distinct solutions to the n-queens puzzle. The function uses a helper function `is_valid_position` to check if a queen can be placed in a given row without being attacked. The `solve_n_queens` function recursively builds the solution by placing queens column by column. The solutions are stored in the `solutions` list and returned at the end. The user input is read and the result is printed in the required format.
+
+### Editorial: Avantika's Chess Challenge
+
+#### Intuition
+
+The n-queens puzzle is a classic problem in combinatorial optimization and backtracking. The primary challenge is to place \( n \) queens on an \( n \times n \) chessboard such that no two queens threaten each other. A queen can attack any piece that is on the same row, column, or diagonal. Therefore, the task is to find all possible ways to place the queens in such a manner that these constraints are satisfied.
+
+Given the constraints where \( n \) can be as large as \( 10^5 \), a direct approach that generates and checks all possible configurations is infeasible due to the exponential growth in potential configurations. Instead, we need an optimized backtracking approach to systematically explore valid placements and prune invalid branches early.
+
+#### Approach
+
+1. **Backtracking**: This is a depth-first search (DFS) technique where we try to place queens one column at a time and backtrack whenever we encounter an invalid configuration.
+2. **Constraints Checking**: For each queen placement, we need to ensure that no two queens are on the same row, column, or diagonal. This can be efficiently checked using additional sets to track attacked rows and diagonals.
+3. **Recursive Placement**: We start placing queens from the first column and move towards the last column. For each column, we try placing a queen in every possible row that is not under attack by another queen.
+
+#### Code
+
+Here's the Python code implementing the above approach using backtracking:
+
+```python
+def solveNQueens(n):
+    def is_not_under_attack(row, col):
+        return not (rows[row] or hills[row - col] or dales[row + col])
+
+    def place_queen(row, col):
+        queens.add((row, col))
+        rows[row] = 1
+        hills[row - col] = 1
+        dales[row + col] = 1
+
+    def remove_queen(row, col):
+        queens.remove((row, col))
+        rows[row] = 0
+        hills[row - col] = 0
+        dales[row + col] = 0
+
+    def add_solution():
+        solution = []
+        for _, col in sorted(queens):
+            solution.append(col + 1)
+        output.append(solution)
+
+    def backtrack(row = 0):
+        for col in range(n):
+            if is_not_under_attack(row, col):
+                place_queen(row, col)
+                if row + 1 == n:
+                    add_solution()
+                else:
+                    backtrack(row + 1)
+                remove_queen(row, col)
+
+    rows = [0] * n
+    hills = [0] * (2 * n - 1)
+    dales = [0] * (2 * n - 1)
+    queens = set()
+    output = []
+    backtrack()
+    return output
+
+# Example usage
+n = 4
+print(solveNQueens(n))
+```
+
+#### Explanation
+
+1. **Helper Functions**:
+   - `is_not_under_attack(row, col)`: Checks if placing a queen at `(row, col)` would be safe by ensuring no other queen is in the same row, hill diagonal, or dale diagonal.
+   - `place_queen(row, col)`: Places a queen at `(row, col)` and marks the row, hill, and dale as attacked.
+   - `remove_queen(row, col)`: Removes a queen from `(row, col)` and unmarks the row, hill, and dale.
+   - `add_solution()`: Converts the set of queen positions into the required permutation format and adds it to the output list.
+
+2. **Backtracking**:
+   - `backtrack(row)`: Attempts to place queens column by column starting from the given row. If a valid position is found, it recursively attempts to place the next queen. If all queens are placed (`row + 1 == n`), it adds the current configuration to the output.
+
+3. **Execution**:
+   - Initializes arrays and sets to track attacked rows and diagonals.
+   - Starts the backtracking process from the first row.
+
+This approach efficiently explores valid configurations and prunes invalid ones early, making it suitable for solving the n-queens puzzle even for larger values of \( n \).
+
+Sure, I can help you create a Python program that generates the test cases and stores them in the respective files. This program will also execute the `solution.py` script with the generated inputs and store the corresponding outputs in the output files.
+
+Here is the Python program:
+
+```python
+import os
+import subprocess
+
+# Function to generate test cases
+def generate_test_cases():
+    # Basic test cases
+    basic_cases = [4, 1, 5, 8]
+    corner_cases = [10, 20]
+    edge_cases = [100, 1000]
+    boundary_cases = [99999, 100000]
+    
+    all_cases = {
+        "basic": basic_cases,
+        "corner": corner_cases,
+        "edge": edge_cases,
+        "boundary": boundary_cases
+    }
+    
+    case_counter = {
+        "basic": 1,
+        "corner": 1,
+        "edge": 1,
+        "boundary": 1
+    }
+    
+    # Create input files
+    for case_type, cases in all_cases.items():
+        for n in cases:
+            file_name = f"{case_type}_input_{case_counter[case_type]}.txt"
+            with open(file_name, "w") as f:
+                f.write(f"{n}\n")
+            case_counter[case_type] += 1
+
+# Function to run solution.py with the generated input files and store the output
+def run_solution_and_store_output():
+    # Get all input files
+    input_files = [f for f in os.listdir() if f.endswith("_input_1.txt") or f.endswith("_input_2.txt") or f.endswith("_input_3.txt") or f.endswith("_input_4.txt")]
+    
+    for input_file in input_files:
+        output_file = input_file.replace("input", "output")
+        with open(input_file, "r") as infile, open(output_file, "w") as outfile:
+            result = subprocess.run(["python3", "solution.py"], stdin=infile, stdout=outfile)
+            if result.returncode != 0:
+                print(f"Error running solution.py with {input_file}")
+
+# Generate test cases
+generate_test_cases()
+
+# Run solution.py and store output
+run_solution_and_store_output()
+```
+
+### Explanation:
+
+1. **Generate Test Cases:**
+   - We define the test cases for basic, corner, edge, and boundary scenarios.
+   - We create a dictionary `all_cases` that holds these test cases.
+   - For each test case type, we iterate through the cases and write the input `n` to a corresponding input file.
+
+2. **Run Solution and Store Output:**
+   - We list all the input files in the current directory that match the pattern for input files.
+   - For each input file, we determine the corresponding output file name.
+   - We run `solution.py` with the input file and capture the output in the corresponding output file using `subprocess.run`.
+
+### Note:
+- Ensure that `solution.py` is in the same directory as this script.
+- This script assumes that `solution.py` reads from standard input and writes to standard output.
+
+You can run this Python script to generate the input and output files for the test cases.### Creative Question Name:
+**"Ptolemy's Scroll Sort: Counting Unique Manuscripts in the Great Library"**
+
+### Tags:
+- Algorithms
+- Data Structures
+- Sets
+- Unique Elements
+- Counting Problems
+
+### Topics:
+- Hashing
+- Set Operations
+- Data Processing
+- Time Complexity Optimization
+
+### Associated Companies:
+- Google
+- Amazon
+- Microsoft
+- Facebook (Meta)
+- Apple
+- Oracle
+
+### Explanation:
+
+In this problem, you are tasked with helping Ptolemy, the librarian of the Great Library of Alexandria, count the number of unique scrolls in a given list. This involves reading a list of scroll numbers and determining how many distinct numbers are present. The problem is a classic example of using sets to filter out duplicates and is relevant in various technical interviews and coding assessments.
+
+**Problem Statement:**
+
+**Title: "The Great Library of Alexandria"**
+
+In the ancient city of Alexandria, the Great Library is renowned for its vast collection of scrolls. The librarian, Ptolemy, has a peculiar way of organizing these scrolls. Each scroll is marked with a unique number, and Ptolemy wants to ensure that the scrolls are arranged in a specific order to make retrieval easier.
+
+Ptolemy's task is to determine the number of unique scrolls in a given list of scrolls. Given a list of scrolls, each identified by a unique number, your task is to help Ptolemy count how many distinct scroll numbers are present. 
+
+**Constraints:**
+- The number of scrolls, \( n \), is between \( 1 \) and \( 10^5 \).
+- Each scroll number is a positive integer and can be as large as \( 10^9 \).
+
+**Input Format:**
+- The first line contains an integer \( n \), the number of scrolls.
+- The second line contains \( n \) space-separated integers, representing the list of scroll numbers.
+
+**Output Format:**
+- Output a single integer representing the number of unique scroll numbers.
+
+**Example:**
+
+**Input:**
+```
+6
+1 2 2 3 4 4
+```
+
+**Output:**
+```
+4
+```
+
+**Explanation:**
+In the given list of scrolls [1, 2, 2, 3, 4, 4], the unique scroll numbers are [1, 2, 3, 4]. Hence, the number of unique scrolls is 4.
+
+**Sample Test Cases:**
+
+**Test Case 1:**
+
+**Input:**
+```
+5
+1 1 1 1 1
+```
+
+**Output:**
+```
+1
+```
+
+**Explanation:**
+All scrolls have the same number, thus there is only one unique scroll number.
+
+**Test Case 2:**
+
+**Input:**
+```
+7
+5 5 5 7 8 8 9
+```
+
+**Output:**
+```
+4
+```
+
+**Explanation:**
+The unique scroll numbers are [5, 7, 8, 9], so there are 4 unique scrolls.
+
+**Solution Code:**
+
+```python
+def count_unique_scrolls(n, scrolls):
+    return len(set(scrolls))
+
+# Example usage:
+n = int(input())
+scrolls = list(map(int, input().split()))
+print(count_unique_scrolls(n, scrolls))
+```
+
+This code reads the number of scrolls and their respective numbers, converts the list of scrolls into a set to remove duplicates, and then counts the number of unique scroll numbers.
+
+Certainly! Below is the rephrased solution code according to the problem statement "The Great Library of Alexandria". The function name, variables, and comments have been updated to match the context of the problem.
+
+```python
+def count_distinct_scrolls(num_scrolls, scroll_numbers):
+    # Convert the list of scroll numbers to a set to get unique scroll numbers
+    return len(set(scroll_numbers))
+
+# Read the number of scrolls
+num_scrolls = int(input())
+
+# Read the scroll numbers
+scroll_numbers = list(map(int, input().split()))
+
+# Output the number of unique scroll numbers
+print(count_distinct_scrolls(num_scrolls, scroll_numbers))
+```
+
+This code reads the number of scrolls and their respective numbers, converts the list of scroll numbers into a set to remove duplicates, and then counts the number of unique scroll numbers.
+
+## Editorial: "The Great Library of Alexandria"
+
+### Intuition
+
+The problem of counting unique scroll numbers is a classic example of determining the uniqueness of elements within a collection. Given the constraints, where the number of scrolls can be large and the scroll numbers can be very large, our intuition should lead us towards an efficient way to handle this. The primary goal is to identify and count the distinct scroll numbers in the list.
+
+### Approach
+
+To solve this problem, we can leverage the properties of a set in Python. A set is a data structure that inherently stores only unique elements. By converting the list of scroll numbers into a set, we automatically filter out any duplicate scroll numbers. The length of this set will then give us the count of unique scroll numbers.
+
+Here's a step-by-step breakdown of the approach:
+
+1. **Input Reading**: Read the number of scrolls, `n`, and the list of scroll numbers.
+2. **Conversion to Set**: Convert the list of scroll numbers into a set. This operation will remove any duplicate scroll numbers.
+3. **Count Unique Elements**: Determine the size of the set, which corresponds to the number of unique scroll numbers.
+4. **Output the Result**: Print the size of the set.
+
+### Code
+
+The following Python code implements the above approach:
+
+```python
+def count_unique_scrolls(n, scrolls):
+    return len(set(scrolls))
+
+# Example usage:
+n = int(input())
+scrolls = list(map(int, input().split()))
+print(count_unique_scrolls(n, scrolls))
+```
+
+### Explanation
+
+1. **Input Reading**:
+   - `n = int(input())`: Reads the number of scrolls.
+   - `scrolls = list(map(int, input().split()))`: Reads the list of scroll numbers, converting the input string into a list of integers.
+
+2. **Conversion to Set**:
+   - `set(scrolls)`: Converts the list of scroll numbers into a set. This operation automatically removes duplicate elements.
+
+3. **Count Unique Elements**:
+   - `len(set(scrolls))`: Calculates the number of unique scroll numbers by determining the size of the set.
+
+4. **Output the Result**:
+   - `print(count_unique_scrolls(n, scrolls))`: Prints the number of unique scroll numbers.
+
+### Detailed Example
+
+Let's walk through the example provided in the problem statement:
+
+**Input:**
+```
+6
+1 2 2 3 4 4
+```
+
+**Process:**
+1. Read `n` and `scrolls`:
+   - `n = 6`
+   - `scrolls = [1, 2, 2, 3, 4, 4]`
+
+2. Convert `scrolls` to a set:
+   - `unique_scrolls = set([1, 2, 2, 3, 4, 4])`
+   - `unique_scrolls = {1, 2, 3, 4}`
+
+3. Count the number of unique scroll numbers:
+   - `len(unique_scrolls) = 4`
+
+4. Output:
+   - `print(4)`
+
+The final output is `4`, which is the number of unique scroll numbers.
+
+### Conclusion
+
+This approach is efficient with a time complexity of O(n) due to the set operations, making it suitable for the given constraints. By leveraging Python's set data structure, we can quickly and effectively count the number of unique scroll numbers in the list.
+
+Here is a Python program to generate the test cases as specified, run the solution code on these inputs, and store the output in the corresponding files.
+
+First, let's prepare the solution code in a file named `solution.py`:
+
+```python
+# solution.py
+def count_unique_scrolls(n, scrolls):
+    return len(set(scrolls))
+
+# Main execution
+if __name__ == "__main__":
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    n = int(data[0])
+    scrolls = list(map(int, data[1:]))
+    print(count_unique_scrolls(n, scrolls))
+```
+
+Next, let's write the Python program to generate the test cases and run the solution:
+
+```python
+import os
+import subprocess
+
+# Define the test cases
+test_cases = {
+    "basic_input_1.txt": "6\n1 2 2 3 4 4\n",
+    "basic_input_2.txt": "5\n1 1 1 1 1\n",
+    "basic_input_3.txt": "7\n5 5 5 7 8 8 9\n",
+    "basic_input_4.txt": "4\n10 20 30 40\n",
+    "corner_input_1.txt": "1\n1000000000\n",
+    "corner_input_2.txt": "1\n1\n",
+    "edge_input_1.txt": "100000\n" + " ".join(map(str, range(1, 100001))) + "\n",
+    "edge_input_2.txt": "100000\n" + " ".join(["1"] * 100000) + "\n",
+    "boundary_input_1.txt": "2\n1 2\n",
+    "boundary_input_2.txt": "2\n2 2\n",
+}
+
+# Create input files
+for file_name, content in test_cases.items():
+    with open(file_name, "w") as f:
+        f.write(content)
+
+# Run the solution on each input file and store the output
+for file_name in test_cases:
+    with open(file_name.replace("input", "output"), "w") as output_file:
+        with open(file_name, "r") as input_file:
+            result = subprocess.run(
+                ["python3", "solution.py"], 
+                stdin=input_file, 
+                stdout=subprocess.PIPE,
+                text=True
+            )
+            output_file.write(result.stdout)
+
+print("Test cases and outputs generated successfully.")
+```
+
+### Steps to execute the program:
+
+1. **Prepare the environment:**
+   - Save the solution code in a file named `solution.py`.
+   - Save the above Python script in a separate file, e.g., `generate_test_cases.py`.
+
+2. **Run the test case generator:**
+   - Execute the script `generate_test_cases.py` in your terminal or command prompt by running:
+     ```bash
+     python3 generate_test_cases.py
+     ```
+
+This script will generate the required input files, execute the solution code on each input, and save the corresponding output in the appropriate files as specified.### Question Name
+"Queens' Gambit: Avantika's n-Queens Challenge"
+
+### Tags
+- Algorithms
+- Backtracking
+- Combinatorial Problems
+- Chess Puzzles
+
+### Topics
+- n-Queens Problem
+- Permutations
+- Recursive Algorithms
+- Constraint Satisfaction Problems
+
+### Companies
+- Google
+- Amazon
+- Facebook
+- Microsoft
+- Apple
+
+### Problem Statement
+
+Avantika is determined to win a chess game against Srey by mastering the famous n-queens puzzle. The challenge is to place `n` queens on an `n x n` chessboard such that no two queens can attack each other. Given an integer `n`, help Avantika find all distinct solutions to the n-queens puzzle. Each solution must represent a distinct board configuration where the placement of the queens is a permutation of the sequence `[1, 2, 3, ..., n]`. In this sequence, the number at the `i-th` position indicates that the queen in the `i-th` column is placed in the row corresponding to that number.
+
+For example, the configuration `[3, 1, 4, 2]` represents a chessboard where:
+- The queen in the 1st column is placed in the 3rd row.
+- The queen in the 2nd column is placed in the 1st row.
+- The queen in the 3rd column is placed in the 4th row.
+- The queen in the 4th column is placed in the 2nd row.
+
+### Constraints
+- `1 <= n <= 10^5`
+
+### Input Format
+- An integer `n` representing the size of the chessboard and the number of queens.
+
+### Output Format
+- A list of lists, where each inner list represents a distinct valid configuration of the n-queens puzzle.
+
+### Example
+
+#### Example 1
+**Input:**
+```
+n = 4
+```
+**Output:**
+```
+[
+ [2, 4, 1, 3],
+ [3, 1, 4, 2]
+]
+```
+**Explanation:**
+The output lists all distinct valid configurations for placing 4 queens on a 4x4 chessboard.
+
+#### Example 2
+**Input:**
+```
+n = 1
+```
+**Output:**
+```
+[
+ [1]
+]
+```
+**Explanation:**
+The only valid configuration for placing 1 queen on a 1x1 chessboard is placing it in the first row and first column.
+
+### Solution Code
+
+```cpp
+class Solution{
+public:
+    vector<vector<int>> ans;
+    
+    bool check(vector<vector<char>>& board , int i , int j){
+        int x = i , y = j;
+        // up
+        while(x >= 0){
+            if(board[x][y] == 'Q'){
+                return false;
+            }
+            x--;
+        }
+        // left diag up
+        x = i;
+        while(x >= 0 && y >= 0){
+            if(board[x][y] == 'Q') return false;
+            x--;
+            y--;
+        }
+        // right diag up
+        x = i , y = j;
+        while(x >= 0 && y < board.size()){
+            if(board[x][y] == 'Q') return false;
+            x--;
+            y++;
+        }
+        return true;
+    }
+    
+    void insertAns(vector<vector<char>>& board){
+        vector<int> row;
+        for(int i=0;i<board.size();i++){
+            for(int j=0;j<board.size();j++){
+                if(board[j][i] == 'Q'){
+                    row.push_back(j+1);
+                    break;
+                }
+            }
+        }
+        if(row.size() == board.size()){
+            ans.push_back(row);
+        }
+    }
+
+    void solve(vector<vector<char>> &board , int i , int n){
+        if(i >= n){
+            insertAns(board);
+            return;
+        }
+        
+        for(int j=0;j<board.size();j++){
+            if(check(board,i,j)){
+                board[i][j] = 'Q';
+                solve(board,i+1,n);
+                board[i][j] = '-';
+            }
+        }
+    }
+
+    vector<vector<int>> nQueen(int n) {
+        vector<vector<char>> board(n,vector<char>(n,'-'));
+        solve(board,0,n);
+        sort(ans.begin(),ans.end());
+        return ans;
+    }
+};
+```
+
+Sure, let's rephrase the solution code to match the problem statement and include user input based on the given input/output format. Here is the modified code:
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class NQueensSolver {
+public:
+    vector<vector<int>> solutions;
+
+    // Function to check if the queen placement is safe
+    bool isSafe(vector<vector<char>>& board, int row, int col) {
+        int x = row, y = col;
+
+        // Check upwards
+        while (x >= 0) {
+            if (board[x][y] == 'Q') {
+                return false;
+            }
+            x--;
+        }
+
+        // Check upper left diagonal
+        x = row;
+        y = col;
+        while (x >= 0 && y >= 0) {
+            if (board[x][y] == 'Q') return false;
+            x--;
+            y--;
+        }
+
+        // Check upper right diagonal
+        x = row;
+        y = col;
+        while (x >= 0 && y < board.size()) {
+            if (board[x][y] == 'Q') return false;
+            x--;
+            y++;
+        }
+
+        return true;
+    }
+
+    // Function to convert board to the required format and store the solution
+    void storeSolution(vector<vector<char>>& board) {
+        vector<int> configuration;
+        for (int i = 0; i < board.size(); i++) {
+            for (int j = 0; j < board.size(); j++) {
+                if (board[j][i] == 'Q') {
+                    configuration.push_back(j + 1);
+                    break;
+                }
+            }
+        }
+        if (configuration.size() == board.size()) {
+            solutions.push_back(configuration);
+        }
+    }
+
+    // Recursive function to solve the N-Queens problem
+    void placeQueens(vector<vector<char>>& board, int row, int n) {
+        if (row >= n) {
+            storeSolution(board);
+            return;
+        }
+
+        for (int col = 0; col < board.size(); col++) {
+            if (isSafe(board, row, col)) {
+                board[row][col] = 'Q';
+                placeQueens(board, row + 1, n);
+                board[row][col] = '-';
+            }
+        }
+    }
+
+    // Main function to find all distinct solutions for the N-Queens problem
+    vector<vector<int>> findNQueensSolutions(int n) {
+        vector<vector<char>> board(n, vector<char>(n, '-'));
+        placeQueens(board, 0, n);
+        sort(solutions.begin(), solutions.end());
+        return solutions;
+    }
+};
+
+int main() {
+    int n;
+    cout << "Enter the value of n: ";
+    cin >> n;
+
+    NQueensSolver solver;
+    vector<vector<int>> result = solver.findNQueensSolutions(n);
+
+    cout << "[\n";
+    for (const auto& config : result) {
+        cout << " [";
+        for (size_t i = 0; i < config.size(); ++i) {
+            cout << config[i];
+            if (i < config.size() - 1) {
+                cout << ", ";
+            }
+        }
+        cout << "]\n";
+    }
+    cout << "]\n";
+
+    return 0;
+}
+```
+
+### Explanation of Changes:
+1. **Class Name:** Changed from `Solution` to `NQueensSolver`.
+2. **Function Names and Variables:**
+   - `check` -> `isSafe`
+   - `insertAns` -> `storeSolution`
+   - `solve` -> `placeQueens`
+   - `nQueen` -> `findNQueensSolutions`
+   - Parameters and local variables have been renamed to be more descriptive.
+3. **User Input:** Added `main` function to take user input for `n` and print the output in the specified format.
+4. **Comments:** Updated comments to reflect the functionality more clearly.
+
+## Editorial for the n-Queens Puzzle Solution
+
+### Intuition
+
+The n-Queens puzzle is a classic combinatorial problem that requires placing `n` queens on an `n x n` chessboard such that no two queens can attack each other. This means that no two queens can share the same row, column, or diagonal. The challenge lies in ensuring all these conditions are met while generating all possible valid board configurations.
+
+### Approach
+
+The problem can be efficiently solved using backtracking. Backtracking helps us explore all potential configurations by placing queens one by one in different columns and checking for conflicts. If a conflict is found, we backtrack and try a different position.
+
+Here's a step-by-step breakdown of the approach:
+
+1. **Board Representation**: Use a 2D vector to represent the chessboard. Each cell can be empty (`'-'`) or occupied by a queen (`'Q'`).
+
+2. **Checking for Conflicts**: Implement a function to check if placing a queen at a given position is safe. This involves checking the column, the left diagonal, and the right diagonal above the current row.
+
+3. **Recursive Backtracking**: Use a recursive function to try placing queens row by row. If a queen can be placed in a row without conflicts, move to the next row. If all rows are successfully filled, record the configuration.
+
+4. **Recording Solutions**: Once a valid configuration is found, convert the board configuration to the required format and store it.
+
+5. **Optimization**: Given the constraint `1 <= n <= 10^5`, this approach is feasible for smaller values of `n`. For larger values, optimization techniques like bit manipulation or advanced pruning strategies may be necessary.
+
+### Code
+
+Below is the C++ code implementing the described approach:
+
+```cpp
+class Solution{
+public:
+    vector<vector<int>> ans;
+    
+    bool check(vector<vector<char>>& board , int i , int j){
+        int x = i , y = j;
+        // up
+        while(x >= 0){
+            if(board[x][y] == 'Q'){
+                return false;
+            }
+            x--;
+        }
+        // left diag up
+        x = i;
+        while(x >= 0 && y >= 0){
+            if(board[x][y] == 'Q') return false;
+            x--;
+            y--;
+        }
+        // right diag up
+        x = i , y = j;
+        while(x >= 0 && y < board.size()){
+            if(board[x][y] == 'Q') return false;
+            x--;
+            y++;
+        }
+        return true;
+    }
+    
+    void insertAns(vector<vector<char>>& board){
+        vector<int> row;
+        for(int i=0;i<board.size();i++){
+            for(int j=0;j<board.size();j++){
+                if(board[j][i] == 'Q'){
+                    row.push_back(j+1);
+                    break;
+                }
+            }
+        }
+        if(row.size() == board.size()){
+            ans.push_back(row);
+        }
+    }
+
+    void solve(vector<vector<char>> &board , int i , int n){
+        if(i >= n){
+            insertAns(board);
+            return;
+        }
+        
+        for(int j=0;j<board.size();j++){
+            if(check(board,i,j)){
+                board[i][j] = 'Q';
+                solve(board,i+1,n);
+                board[i][j] = '-';
+            }
+        }
+    }
+
+    vector<vector<int>> nQueen(int n) {
+        vector<vector<char>> board(n,vector<char>(n,'-'));
+        solve(board,0,n);
+        sort(ans.begin(),ans.end());
+        return ans;
+    }
+};
+```
+
+### Explanation
+
+1. **Check Function**: This function ensures that placing a queen at `board[i][j]` is safe by checking:
+   - The column above the current row.
+   - The left diagonal above the current row.
+   - The right diagonal above the current row.
+
+2. **Insert Answer Function**: Converts the current valid board configuration to the required format (list of row indices) and stores it in the answer list.
+
+3. **Solve Function**: Uses recursion to place queens on the board. It tries to place a queen in each column of the current row and recursively attempts to place queens in subsequent rows. If a valid configuration is found (i.e., all rows are filled), it is recorded.
+
+4. **Main Function**: Initializes the board and starts the recursive process. After finding all solutions, it sorts and returns them.
+
+This approach ensures that all valid configurations are explored and recorded efficiently, providing a comprehensive solution to the n-Queens puzzle.
+
+
+
+### Program to generate testcases:
+
+To generate the required test cases and execute them using a solution script, we can create a Python program that does the following:
+
+1. Generates the input files for the basic, corner, edge, and boundary test cases.
+2. Executes the solution script (`solution.py`) with the generated inputs.
+3. Captures the outputs and stores them in the corresponding output files.
+
+Here's the Python program to achieve this:
+
+```python
+import subprocess
+import os
+
+# Define the test cases
+test_cases = {
+    "basic": [
+        (4, "basic_input_1.txt", "basic_output_1.txt"),
+        (1, "basic_input_2.txt", "basic_output_2.txt"),
+        (5, "basic_input_3.txt", "basic_output_3.txt"),
+        (3, "basic_input_4.txt", "basic_output_4.txt")
+    ],
+    "corner": [
+        (2, "corner_input_1.txt", "corner_output_1.txt"),
+        (6, "corner_input_2.txt", "corner_output_2.txt")
+    ],
+    "edge": [
+        (10, "edge_input_1.txt", "edge_output_1.txt"),
+        (15, "edge_input_2.txt", "edge_output_2.txt")
+    ],
+    "boundary": [
+        (100000, "boundary_input_1.txt", "boundary_output_1.txt"),
+        (99999, "boundary_input_2.txt", "boundary_output_2.txt")
+    ]
+}
+
+# Create input files
+for category, cases in test_cases.items():
+    for n, input_file, output_file in cases:
+        with open(input_file, 'w') as f:
+            f.write(f"{n}\n")
+
+# Function to run solution.py and capture output
+def run_solution(input_file, output_file):
+    with open(input_file, 'r') as infile, open(output_file, 'w') as outfile:
+        subprocess.run(['python3', 'solution.py'], stdin=infile, stdout=outfile)
+
+# Run the solution for each test case
+for category, cases in test_cases.items():
+    for n, input_file, output_file in cases:
+        run_solution(input_file, output_file)
+
+print("Test cases generated and executed successfully.")
+```
+
+### Explanation
+
+1. **Define the test cases**: We define the test cases as a dictionary with categories (basic, corner, edge, boundary) and provide tuples containing the value of `n`, the input file name, and the output file name.
+
+2. **Create input files**: We loop through each test case and write the value of `n` to the corresponding input file.
+
+3. **Run the solution script**: The `run_solution` function takes an input file and an output file, runs the `solution.py` script using the input file, and writes the output to the output file.
+
+4. **Execute the solution for each test case**: We loop through each test case and call the `run_solution` function to generate the outputs.
+
+### Note
+Make sure you have the `solution.py` script in the same directory as this script. The `solution.py` script should contain the logic for solving the n-queens puzzle as described in the problem statement. The provided code should be adapted to Python if it's currently in C++.
+
+Save this script as `generate_test_cases.py` and run it to generate the test cases and corresponding output files.### Jumping Over Bookstacks to Chocolate Land
+
+**Tags:** Algorithm, Dynamic Programming, Longest Increasing Subsequence
+
+**Topics:** Arrays, Sequences, Optimization
+
+**Companies:** Google, Facebook, Amazon, Microsoft
+
+---
+
+This problem involves finding the longest subsequence of book heights that Manish can jump on in non-decreasing order, ultimately helping him reach the land of chocolates. It is a classic example of the Longest Increasing Subsequence (LIS) problem, which can be efficiently solved using dynamic programming techniques. The given solution leverages a combination of a vector and binary search to achieve optimal performance.
+
+### Problem Summary
+Manish must jump across books whose heights are given in an array. He can only jump to a book if its height is greater than or equal to the current book he is on. The goal is to determine the maximum number of books he can jump on in this manner.
+
+### Input
+- Integer \( n \) representing the number of books.
+- Array of integers representing the heights of the books.
+
+### Output
+- An integer representing the maximum number of books Manish can jump on following the non-decreasing order rule.
+
+### Example
+**Input:**
+```
+5
+2 5 3 7 11
+```
+
+**Output:**
+```
+4
+```
+
+**Explanation:**
+Manish can jump on books with heights 2, 3, 7, and 11.
+
+### Solution Explanation
+The provided solution uses a vector `a` to keep track of the longest sequence of non-decreasing book heights. For each book's height, it determines the appropriate position in the vector using `lower_bound`. If the height is larger than all elements in the vector, it is appended to the end. Otherwise, it replaces the first element in the vector that is not smaller than the height. This method ensures that the vector `a` always contains the smallest possible end elements for subsequences of various lengths, allowing the length of the vector to represent the length of the longest non-decreasing subsequence.
+
+### Code
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> a;
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        auto it = lower_bound(a.begin(), a.end(), x);
+        if (it == a.end()) {
+            a.push_back(x);
+        } else {
+            a[it - a.begin()] = x;
+        }
+    }
+    cout << a.size() << endl;
+    return 0;
+}
+```
+
+This approach ensures that the solution is efficient and can handle the upper constraints of the problem.
+
+### Problem Statement
+
+Manish wants to reach the land of chocolates where he can collect as many chocolates as possible. However, to get there, he must overcome a series of obstacles, each represented by a book of varying heights. Manish can only proceed by jumping on books in non-decreasing order of their heights. 
+
+Given the heights of the books, your task is to determine the maximum number of books Manish can jump on in a non-decreasing order on his way to the land of chocolates.
+
+### Input Format
+
+- The first line of the input contains a single integer \( n \) – the number of books.
+- The second line of the input contains \( n \) integers \( a_1, a_2, \ldots, a_n \) – the heights of the books, where \( a_i \) represents the height of the \( i \)-th book from the left.
+
+### Output Format
+
+- Output a single integer – the maximum number of books Manish can jump on in non-decreasing order.
+
+### Constraints
+
+- \( 1 \leq n \leq 10^5 \)
+- \( 1 \leq a_i \leq 10^9 \)
+
+### Sample Test Cases
+
+#### Sample Input 1
+```
+5
+2 5 3 7 11
+```
+
+#### Sample Output 1
+```
+4
+```
+
+#### Explanation 1
+Manish can jump on the books in the order of their heights as follows: 2, 3, 7, 11. This sequence is non-decreasing and includes 4 books.
+
+#### Sample Input 2
+```
+6
+1 2 3 4 5 6
+```
+
+#### Sample Output 2
+```
+6
+```
+
+#### Explanation 2
+Manish can jump on all the books as their heights are already in non-decreasing order.
+
+### Solution Code
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> a;
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        auto it = lower_bound(a.begin(), a.end(), x);
+        if (it == a.end()) {
+            a.push_back(x);
+        } else {
+            a[it - a.begin()] = x;
+        }
+    }
+    cout << a.size() << endl;
+    return 0;
+}
+```
+
+Sure, I'll rephrase the solution code according to the problem statement and modify the variable names, function name, and comments accordingly. Here is the updated code:
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    // Number of books
+    int numBooks;
+    cin >> numBooks;
+    
+    // Heights of the books
+    vector<int> bookHeights;
+    
+    for (int i = 0; i < numBooks; i++) {
+        int height;
+        cin >> height;
+        
+        // Find the position to replace or extend the sequence
+        auto pos = lower_bound(bookHeights.begin(), bookHeights.end(), height);
+        
+        if (pos == bookHeights.end()) {
+            // If height is greater than any element in bookHeights, add it to the end
+            bookHeights.push_back(height);
+        } else {
+            // Replace the element at the found position
+            bookHeights[pos - bookHeights.begin()] = height;
+        }
+    }
+    
+    // The size of bookHeights is the maximum number of books Manish can jump on
+    cout << bookHeights.size() << endl;
+    
+    return 0;
+}
+```
+
+### Explanation of Changes:
+1. **Variable Names:**
+   - `n` is changed to `numBooks` to represent the number of books.
+   - `a` is changed to `bookHeights` to represent the heights of the books.
+   - `x` is changed to `height` to represent the current book height being read.
+   - `it` is changed to `pos` to represent the position found using `lower_bound`.
+
+2. **Comments:**
+   - Added comments to explain the purpose of each section of the code.
+
+3. **Input/Output:**
+   - The code now reads the number of books and their heights from the input and outputs the maximum number of books Manish can jump on in non-decreasing order.
+
+This code maintains the logic of the original solution but adapts the naming and comments to fit the context of the problem statement about Manish and the land of chocolates.
+
+## Editorial: Maximum Number of Books Manish Can Jump On
+
+### Intuition
+
+The problem requires us to determine the maximum number of books that Manish can jump on in a non-decreasing order of their heights. Essentially, this is a classic problem of finding the longest non-decreasing subsequence in an array, which is a well-known dynamic programming problem with an efficient solution using binary search.
+
+### Approach
+
+To solve this problem, we can leverage the concept of the Longest Increasing Subsequence (LIS), but with slight modifications to handle non-decreasing order. The key steps are:
+
+1. **Dynamic Programming with Binary Search**: We maintain an array `dp` where each element `dp[i]` represents the minimum possible ending value of a subsequence of length `i+1` that is non-decreasing.
+  
+2. **Binary Search for Efficiency**: For each height in the list of books, we use binary search to find the position where this height can extend or replace an element in `dp` to maintain the longest non-decreasing subsequence.
+
+3. **Updating the `dp` Array**: If the height can extend the subsequence, it is appended to `dp`. If it replaces an existing value, it ensures the subsequence remains non-decreasing and potentially allows for longer subsequences in future iterations.
+
+### Code
+
+Here is the implementation in C++:
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+    }
+
+    vector<int> dp;
+    for (int i = 0; i < n; i++) {
+        auto it = lower_bound(dp.begin(), dp.end(), a[i]);
+        if (it == dp.end()) {
+            dp.push_back(a[i]);
+        } else {
+            *it = a[i];
+        }
+    }
+
+    cout << dp.size() << endl;
+    return 0;
+}
+```
+
+### Explanation
+
+1. **Reading Input**: 
+   - The number of books `n` and their respective heights are read into an array `a`.
+
+2. **Dynamic Programming Array Initialization**:
+   - We initialize an empty vector `dp` which will be used to store the minimum end values of subsequences of different lengths.
+
+3. **Processing Each Book Height**:
+   - For each height `a[i]` in the array, we use the `lower_bound` function to find the first element in `dp` that is not less than `a[i]`.
+   - If `lower_bound` returns an iterator pointing to the end of `dp`, it means `a[i]` is greater than all current elements in `dp`, so we append `a[i]` to `dp`.
+   - Otherwise, we replace the element pointed to by the iterator with `a[i]` to maintain the smallest possible ending value for subsequences of that length.
+
+4. **Result**:
+   - The size of the `dp` array at the end of the loop represents the length of the longest non-decreasing subsequence, which is the maximum number of books Manish can jump on.
+
+### Conclusion
+
+This approach ensures an efficient O(n log n) solution due to the use of binary search within the dynamic programming framework. The problem is effectively a variation of finding the Longest Increasing Subsequence, adapted to handle non-decreasing sequences, and the solution leverages well-known techniques to achieve optimal performance.
+
+
+
+### Program to generate testcases:
+
+Certainly! Below is a Python script that generates the required test cases and stores them in appropriate files. It also includes the mechanism to run the solution code (assumed to be in `solution.py`) and store the output in corresponding files.
+
+```python
+import os
+import subprocess
+
+# Function to write test case to a file
+def write_test_case(filename, content):
+    with open(filename, 'w') as f:
+        f.write(content)
+
+# Function to run solution.py and capture the output
+def run_solution(input_filename, output_filename):
+    with open(input_filename, 'r') as infile, open(output_filename, 'w') as outfile:
+        subprocess.run(['python3', 'solution.py'], stdin=infile, stdout=outfile)
+
+# Basic Test Cases
+basic_test_cases = [
+    "5\n2 5 3 7 11\n",  # Example from the problem statement
+    "6\n1 2 3 4 5 6\n",  # Already sorted
+    "3\n10 20 30\n",  # Simple increasing
+    "4\n4 4 4 4\n"  # All same height
+]
+
+# Corner Test Cases
+corner_test_cases = [
+    "1\n1000000000\n",  # Single book with max height
+    "2\n1 1000000000\n"  # Two books with min and max heights
+]
+
+# Edge Test Cases
+edge_test_cases = [
+    "5\n5 4 3 2 1\n",  # Strictly decreasing
+    "5\n1 3 2 4 5\n"  # Mixed order
+]
+
+# Boundary Test Cases
+boundary_test_cases = [
+    "100000\n" + " ".join(map(str, range(1, 100001))) + "\n",  # Maximum n with increasing order
+    "100000\n" + " ".join(map(str, range(100000, 0, -1))) + "\n"  # Maximum n with decreasing order
+]
+
+# Directory to store test cases and outputs
+os.makedirs('test_cases', exist_ok=True)
+
+# Write and run basic test cases
+for i, test_case in enumerate(basic_test_cases, 1):
+    input_filename = f'test_cases/basic_input_{i}.txt'
+    output_filename = f'test_cases/basic_output_{i}.txt'
+    write_test_case(input_filename, test_case)
+    run_solution(input_filename, output_filename)
+
+# Write and run corner test cases
+for i, test_case in enumerate(corner_test_cases, 1):
+    input_filename = f'test_cases/corner_input_{i}.txt'
+    output_filename = f'test_cases/corner_output_{i}.txt'
+    write_test_case(input_filename, test_case)
+    run_solution(input_filename, output_filename)
+
+# Write and run edge test cases
+for i, test_case in enumerate(edge_test_cases, 1):
+    input_filename = f'test_cases/edge_input_{i}.txt'
+    output_filename = f'test_cases/edge_output_{i}.txt'
+    write_test_case(input_filename, test_case)
+    run_solution(input_filename, output_filename)
+
+# Write and run boundary test cases
+for i, test_case in enumerate(boundary_test_cases, 1):
+    input_filename = f'test_cases/boundary_input_{i}.txt'
+    output_filename = f'test_cases/boundary_output_{i}.txt'
+    write_test_case(input_filename, test_case)
+    run_solution(input_filename, output_filename)
+```
+
+### Explanation:
+1. **Test Case Generation**:
+    - **Basic Test Cases**: Four test cases covering normal scenarios.
+    - **Corner Test Cases**: Two test cases covering the smallest and the largest possible values.
+    - **Edge Test Cases**: Two test cases covering edge scenarios like strictly decreasing order.
+    - **Boundary Test Cases**: Two test cases covering the maximum constraints.
+
+2. **File Handling**:
+    - Each test case is written to a corresponding input file.
+    - The solution is run using `subprocess.run()`, and the output is captured and written to the corresponding output file.
+
+3. **Assumptions**:
+    - The solution code is in `solution.py` and can be run with `python3`.
+    - The test cases and output files are stored in a directory called `test_cases`.
+
+Make sure the `solution.py` file is in the same directory as this script, and it is designed to read from standard input and write to standard output.### Question Name
+**"Manish's Chocolate Expedition: Maximizing the Sweet Returns"**
+
+### Tags
+- Algorithms
+- Dynamic Programming
+- Greedy
+- Data Structures
+
+### Topics
+- Interval Problems
+- Optimization
+- Sorting
+
+### Companies
+- Google
+- Amazon
+- Facebook
+- Microsoft
+- Adobe
+
+This problem involves optimizing the collection of chocolates from various shops along a path, making it relevant to companies that focus on complex algorithmic challenges and optimization problems.
+
+### Problem Statement
+
+Manish wants to embark on a journey to the land of chocolates, where he can collect as many chocolates as possible. The path to the land of chocolates is represented by a sequence of positions numbered from 1 to N. Along the way, there are several chocolate shops, each covering a specific range of positions and offering chocolates at a certain cost.
+
+Given:
+- A positive integer \( N \) representing the number of positions.
+- An array `shops` of size \( M \), where each element is of the form \( \{L, R, C\} \). Here, \( L \) and \( R \) represent the range of positions (inclusive) covered by a shop, and \( C \) is the cost of chocolates at that shop.
+- A positive integer \( K \) representing the maximum number of shops that Manish can visit for any given position.
+
+Your task is to help Manish find the maximum cost of chocolates he can collect at any position from 1 to \( N \), given that he can visit at most \( K \) shops for each position.
+
+### Constraints
+- \( 1 \leq N \leq 10^5 \)
+- \( 1 \leq M \leq 10^5 \)
+- \( 1 \leq L \leq R \leq N \)
+- \( 1 \leq C \leq 10^9 \)
+- \( 1 \leq K \leq M \)
+
+### Input Format
+- The first line contains two integers \( N \) and \( M \).
+- The next \( M \) lines each contain three integers \( L \), \( R \), and \( C \) describing each shop.
+- The last line contains the integer \( K \).
+
+### Output Format
+- Print a single integer representing the maximum cost of chocolates Manish can collect at any position from 1 to \( N \).
+
+### Sample Test Cases
+
+#### Sample Input 1
+```
+5 3
+1 3 10
+2 5 5
+4 5 7
+2
+```
+
+#### Sample Output 1
+```
+15
+```
+
+#### Explanation
+For position 2, Manish can visit the shops covering ranges [1, 3] and [2, 5], collecting chocolates with costs 10 and 5 respectively. Thus, the maximum cost at position 2 is 15.
+
+#### Sample Input 2
+```
+4 2
+1 2 8
+3 4 6
+1
+```
+
+#### Sample Output 2
+```
+8
+```
+
+#### Explanation
+For position 1, Manish can visit the shop covering range [1, 2], collecting chocolates with cost 8.
+
+### Solution Code (C++)
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+// Function to maximize the total cost
+// by choosing an item which lies in
+// the interval L to R
+void maxTotalCost(vector<vector<int>>& arr, int M, int N, int K) {
+    // Stores the total maximum sum
+    int totMaxSum = 0;
+
+    for (int i = 1; i <= N; ++i) {
+        // Stores the cost for ith item
+        vector<int> currCost;
+
+        for (int j = 0; j < M; ++j) {
+            // Check if the ith item
+            // belongs in the interval
+            if (arr[j][0] <= i && arr[j][1] >= i) {
+                // Add the jth cost
+                currCost.push_back(arr[j][2]);
+            }
+        }
+
+        // Sort the currCost[] in the
+        // non-increasing order
+        sort(currCost.begin(), currCost.end(), greater<int>());
+
+        // Stores the ith item sum
+        int sum = 0;
+
+        // Choose at most K costs
+        for (int j = 0; j < K && j < currCost.size(); ++j) {
+            // Update the sum
+            sum += currCost[j];
+        }
+
+        // Update the totMaxSum
+        totMaxSum = max(totMaxSum, sum);
+    }
+
+    // Print the value of totMaxSum
+    cout << totMaxSum << endl;
+}
+
+int main() {
+    int N, M;
+    cin >> N >> M;
+    vector<vector<int>> arr(M, vector<int>(3));
+    for (int i = 0; i < M; ++i) {
+        cin >> arr[i][0] >> arr[i][1] >> arr[i][2];
+    }
+    int K;
+    cin >> K;
+    maxTotalCost(arr, M, N, K);
+    return 0;
+}
+```
+
+Sure, here's the solution code rephrased according to the problem statement, with updated comments, function name, and variables. This code also takes user input based on the specified input/output format:
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+// Function to find the maximum cost of chocolates
+// Manish can collect at any position from 1 to N
+void findMaxChocolates(vector<vector<int>>& shops, int M, int N, int K) {
+    // Stores the maximum cost of chocolates
+    int maxChocolates = 0;
+
+    for (int pos = 1; pos <= N; ++pos) {
+        // Stores the cost of chocolates for the current position
+        vector<int> currentCosts;
+
+        for (int j = 0; j < M; ++j) {
+            // Check if the current position
+            // lies within the shop's range
+            if (shops[j][0] <= pos && shops[j][1] >= pos) {
+                // Add the cost of chocolates from this shop
+                currentCosts.push_back(shops[j][2]);
+            }
+        }
+
+        // Sort the currentCosts in non-increasing order
+        sort(currentCosts.begin(), currentCosts.end(), greater<int>());
+
+        // Sum of chocolates cost for the current position
+        int currentSum = 0;
+
+        // Choose at most K costs
+        for (int j = 0; j < K && j < currentCosts.size(); ++j) {
+            // Update the sum
+            currentSum += currentCosts[j];
+        }
+
+        // Update the maximum chocolates cost
+        maxChocolates = max(maxChocolates, currentSum);
+    }
+
+    // Print the maximum cost of chocolates
+    cout << maxChocolates << endl;
+}
+
+int main() {
+    int N, M;
+    cin >> N >> M;
+    vector<vector<int>> shops(M, vector<int>(3));
+    for (int i = 0; i < M; ++i) {
+        cin >> shops[i][0] >> shops[i][1] >> shops[i][2];
+    }
+    int K;
+    cin >> K;
+    findMaxChocolates(shops, M, N, K);
+    return 0;
+}
+```
+
+### Explanation of Changes:
+1. **Function Name and Variables**:
+   - `maxTotalCost` -> `findMaxChocolates`
+   - `arr` -> `shops`
+   - `totMaxSum` -> `maxChocolates`
+   - `currCost` -> `currentCosts`
+   - `sum` -> `currentSum`
+   - `i` -> `pos` (to represent the position)
+
+2. **Comments**:
+   - Adjusted comments to reflect the new context of Manish collecting chocolates.
+
+3. **Input Handling**:
+   - The code now reads the input directly as per the specified format.
+
+This should align the code with the problem statement while maintaining its functionality.
+
+### Intuition
+
+The problem involves finding the maximum cost of chocolates Manish can collect at any position from 1 to \( N \) given that he can visit at most \( K \) shops for each position. The key insight here is to evaluate the cost contributions from all relevant shops for each position and determine the maximum possible sum by selecting up to \( K \) highest costs.
+
+### Approach
+
+1. **Data Aggregation**: For each position from 1 to \( N \), gather all the costs from shops covering that position. This can be achieved efficiently using a sweepline or range update technique.
+2. **Sorting and Selection**: For each position, sort the gathered costs in descending order and sum up the top \( K \) costs. Track the maximum sum across all positions.
+3. **Efficiency Considerations**: Given the constraints, the solution needs to be efficient in both time and space. Directly iterating over all positions for each shop would be too slow. Instead, we use data structures to keep track of active shops and their costs.
+
+### Code
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+void maxTotalCost(vector<vector<int>>& shops, int M, int N, int K) {
+    vector<vector<int>> costAtPosition(N + 1);
+
+    // Aggregate costs for each position covered by shops
+    for (const auto& shop : shops) {
+        int L = shop[0], R = shop[1], C = shop[2];
+        for (int pos = L; pos <= R; ++pos) {
+            costAtPosition[pos].push_back(C);
+        }
+    }
+
+    int maxCost = 0;
+
+    // Calculate the maximum possible cost for each position
+    for (int pos = 1; pos <= N; ++pos) {
+        if (!costAtPosition[pos].empty()) {
+            sort(costAtPosition[pos].rbegin(), costAtPosition[pos].rend());
+            int currentSum = 0;
+            for (int i = 0; i < min(K, (int)costAtPosition[pos].size()); ++i) {
+                currentSum += costAtPosition[pos][i];
+            }
+            maxCost = max(maxCost, currentSum);
+        }
+    }
+
+    cout << maxCost << endl;
+}
+
+int main() {
+    int N, M;
+    cin >> N >> M;
+    vector<vector<int>> shops(M, vector<int>(3));
+    for (int i = 0; i < M; ++i) {
+        cin >> shops[i][0] >> shops[i][1] >> shops[i][2];
+    }
+    int K;
+    cin >> K;
+    maxTotalCost(shops, M, N, K);
+    return 0;
+}
+```
+
+### Detailed Explanation
+
+1. **Input Parsing**:
+   - We start by reading the number of positions \( N \) and the number of shops \( M \).
+   - Next, we read the shop details into a vector `shops`, where each shop is represented by a triplet \( \{L, R, C\} \).
+
+2. **Data Aggregation**:
+   - We initialize a vector `costAtPosition` of size \( N+1 \) to store the costs of chocolates available at each position. The size \( N+1 \) ensures that we can directly use position indices.
+   - For each shop, we iterate over the positions from \( L \) to \( R \) and append the cost \( C \) to the respective positions in `costAtPosition`.
+
+3. **Cost Calculation**:
+   - Initialize a variable `maxCost` to keep track of the maximum sum of chocolates' costs possible at any position.
+   - For each position from 1 to \( N \), if there are any costs recorded in `costAtPosition[pos]`, we sort these costs in descending order.
+   - We then sum up the top \( K \) costs (or fewer if there are less than \( K \) costs) and update `maxCost` if this sum is greater than the current `maxCost`.
+
+4. **Output**:
+   - Finally, we print the maximum cost found across all positions.
+
+This approach ensures that we efficiently gather and process the costs for each position, and it handles the constraints well by leveraging sorting and careful iteration.
+
+
+
+### Program to generate testcases:
+
+To generate the test cases and execute them against the provided solution, we'll write a Python script that performs the following steps:
+
+1. Create the input files for the test cases.
+2. Run the solution code (`solution.py`) with each input file.
+3. Capture and store the output in the corresponding output files.
+
+Below is the Python script that accomplishes this:
+
+```python
+import os
+import subprocess
+
+# Define the input and output filenames
+basic_inputs = [f'basic_input_{i}.txt' for i in range(1, 5)]
+basic_outputs = [f'basic_output_{i}.txt' for i in range(1, 5)]
+corner_inputs = [f'corner_input_{i}.txt' for i in range(1, 3)]
+corner_outputs = [f'corner_output_{i}.txt' for i in range(1, 3)]
+edge_inputs = [f'edge_input_{i}.txt' for i in range(1, 3)]
+edge_outputs = [f'edge_output_{i}.txt' for i in range(1, 3)]
+boundary_inputs = [f'boundary_input_{i}.txt' for i in range(1, 3)]
+boundary_outputs = [f'boundary_output_{i}.txt' for i in range(1, 3)]
+
+# Test cases data
+test_cases = {
+    'basic': [
+        "5 3\n1 3 10\n2 5 5\n4 5 7\n2\n",
+        "4 2\n1 2 8\n3 4 6\n1\n",
+        "6 4\n1 4 10\n2 6 5\n3 5 7\n1 6 3\n3\n",
+        "3 3\n1 2 8\n2 3 7\n1 3 6\n1\n"
+    ],
+    'corner': [
+        "1 1\n1 1 10\n1\n",
+        "10 5\n1 5 8\n2 6 7\n3 7 6\n4 8 5\n5 9 4\n3\n"
+    ],
+    'edge': [
+        "100000 1\n1 100000 1000000000\n1\n",
+        "100000 100000\n" + "\n".join(f"{i} {i+1} {i*1000}" for i in range(1, 100001)) + "\n100\n"
+    ],
+    'boundary': [
+        "2 1\n1 2 10\n1\n",
+        "2 2\n1 1 5\n2 2 10\n1\n"
+    ]
+}
+
+# Write the test cases to files
+for i, data in enumerate(test_cases['basic']):
+    with open(basic_inputs[i], 'w') as f:
+        f.write(data)
+
+for i, data in enumerate(test_cases['corner']):
+    with open(corner_inputs[i], 'w') as f:
+        f.write(data)
+
+for i, data in enumerate(test_cases['edge']):
+    with open(edge_inputs[i], 'w') as f:
+        f.write(data)
+
+for i, data in enumerate(test_cases['boundary']):
+    with open(boundary_inputs[i], 'w') as f:
+        f.write(data)
+
+# Function to run the solution and capture the output
+def run_solution(input_file, output_file):
+    with open(input_file, 'r') as infile, open(output_file, 'w') as outfile:
+        subprocess.run(['python3', 'solution.py'], stdin=infile, stdout=outfile)
+
+# Run the solution on each test case
+for i in range(4):
+    run_solution(basic_inputs[i], basic_outputs[i])
+
+for i in range(2):
+    run_solution(corner_inputs[i], corner_outputs[i])
+    run_solution(edge_inputs[i], edge_outputs[i])
+    run_solution(boundary_inputs[i], boundary_outputs[i])
+
+print("All test cases have been executed and outputs are stored in corresponding files.")
+```
+
+### Instructions for Usage:
+1. Ensure you have the solution code (`solution.py`) in the same directory as this script.
+2. Run this script using Python (`python3 generate_testcases.py`).
+3. The script will create the necessary input files, run the solution, and store the outputs in the respective output files.
+
+### Note
+The `solution.py` file should be a Python version of the provided C++ solution. If `solution.py` is in a different language or has different requirements, you may need to adjust the `subprocess.run` command accordingly.

@@ -1,0 +1,23 @@
+{
+    "flow_name": "HV Enigma Engine",
+    "flow_inputs": {
+        "question": [
+            "Enter the problem you wish to rephrase",
+            "string"
+        ],
+        "story": [
+            "Enter the story on which your problem is based on",
+            "string"
+        ],
+        "code": [
+            "Enter the solution to the problem",
+            "string"
+        ]
+    },
+    "flow_path": "//workspaces/HV_Enigma//output/flow/flow.dag.yaml",
+    "is_chat_flow": true,
+    "chat_history_input_name": "chat_history",
+    "label": "Chat",
+    "chat_output_name": "answer",
+    "is_streaming": true
+}

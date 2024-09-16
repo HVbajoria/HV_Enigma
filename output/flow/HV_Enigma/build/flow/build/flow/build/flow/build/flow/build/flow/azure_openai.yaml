@@ -1,0 +1,6 @@
+$schema: https://azuremlschemas.azureedge.net/promptflow/latest/AzureOpenAIConnection.schema.json
+name: open_ai_connection
+type: azure_open_ai
+api_key: "ae8147c37bbf4dc780ff6a883524d24b"
+api_base: "<https://enigmaengine.openai.azure.com/"
+api_type: "azure"

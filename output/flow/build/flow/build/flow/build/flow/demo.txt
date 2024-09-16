@@ -1,0 +1,500 @@
+### Question Name:
+**"Avantika's Chessboard Conundrum: The n-Queens Challenge"**
+
+### Tags:
+- Algorithm
+- Backtracking
+- Recursion
+- Chess
+- Combinatorial Problems
+
+### Topics:
+- Backtracking
+- Combinatorial Search
+- Dynamic Programming
+- Optimization Problems
+
+### Companies:
+- Google
+- Facebook
+- Amazon
+- Microsoft
+- Apple
+
+### Additional Context:
+This problem is often encountered in technical interviews for software engineering positions, especially in companies that emphasize algorithmic proficiency and problem-solving skills. The n-queens puzzle is a classic example used to test a candidate's understanding of backtracking algorithms and their ability to handle combinatorial search problems.
+
+## Problem Statement
+
+### Story: Avantika's Quest to Win the Chess Challenge
+
+Avantika is engaged in an intense chess match with her friend Srey. To secure her victory, she needs to solve a classic chess puzzle: the n-queens puzzle. The challenge is to place `n` queens on an `n x n` chessboard in such a way that no two queens can attack each other. 
+
+Given an integer `n`, your task is to help Avantika find all distinct solutions to the n-queens puzzle. Each solution should represent a unique configuration of the n-queens placement, where the solutions are permutations of `[1, 2, 3, ..., n]` in increasing order. In each permutation, the number in the `i-th` position indicates that the queen in the `i-th` column is placed in the row with that number.
+
+For example, the permutation `[3, 1, 4, 2]` represents the following chessboard configuration:
+```
+. . Q .
+Q . . .
+. . . Q
+. Q . .
+```
+
+### Constraints
+
+- \(1 \leq n \leq 10^5\)
+
+### Input Format
+
+- A single integer `n` representing the size of the chessboard and the number of queens to be placed.
+
+### Output Format
+
+- A list of lists, where each inner list represents a distinct board configuration of the n-queens placement as described above.
+
+### Example
+
+#### Example 1:
+**Input:**
+```plaintext
+4
+```
+
+**Output:**
+```plaintext
+[[2, 4, 1, 3], [3, 1, 4, 2]]
+```
+
+**Explanation:**
+The output represents two distinct configurations:
+1. `[2, 4, 1, 3]`
+   ```
+   . Q . .
+   . . . Q
+   Q . . .
+   . . Q .
+   ```
+2. `[3, 1, 4, 2]`
+   ```
+   . . Q .
+   Q . . .
+   . . . Q
+   . Q . .
+   ```
+
+#### Example 2:
+**Input:**
+```plaintext
+1
+```
+
+**Output:**
+```plaintext
+[[1]]
+```
+
+**Explanation:**
+The output represents the only configuration for `n=1`:
+1. `[1]`
+   ```
+   Q
+   ```
+
+### Solution Code
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> ans;
+    
+    bool check(vector<vector<char>>& board, int i, int j) {
+        int x = i, y = j;
+        // Check upward direction
+        while(x >= 0) {
+            if(board[x][y] == 'Q') {
+                return false;
+            }
+            x--;
+        }
+        // Check left diagonal upward direction
+        x = i, y = j;
+        while(x >= 0 && y >= 0) {
+            if(board[x][y] == 'Q') return false;
+            x--;
+            y--;
+        }
+        // Check right diagonal upward direction
+        x = i, y = j;
+        while(x >= 0 && y < board.size()) {
+            if(board[x][y] == 'Q') return false;
+            x--;
+            y++;
+        }
+        return true;
+    }
+    
+    void insertAns(vector<vector<char>>& board) {
+        vector<int> row;
+        for(int i = 0; i < board.size(); i++) {
+            for(int j = 0; j < board.size(); j++) {
+                if(board[j][i] == 'Q') {
+                    row.push_back(j + 1);
+                    break;
+                }
+            }
+        }
+        if(row.size() == board.size()) {
+            ans.push_back(row);
+        }
+    }
+
+    void solve(vector<vector<char>>& board, int i, int n) {
+        if(i >= n) {
+            insertAns(board);
+            return;
+        }
+        
+        for(int j = 0; j < board.size(); j++) {
+            if(check(board, i, j)) {
+                board[i][j] = 'Q';
+                solve(board, i + 1, n);
+                board[i][j] = '-';
+            }
+        }
+    }
+
+    vector<vector<int>> nQueen(int n) {
+        vector<vector<char>> board(n, vector<char>(n, '-'));
+        solve(board, 0, n);
+        sort(ans.begin(), ans.end());
+        return ans;
+    }
+};
+```
+
+Sure, I'll rephrase the solution code to match the problem statement and take user input based on the given format.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class ChessSolver {
+public:
+    vector<vector<int>> solutions;
+    
+    // Function to check if placing a queen at (row, col) is safe
+    bool isSafe(vector<vector<char>>& board, int row, int col) {
+        int x = row, y = col;
+        // Check upward direction
+        while(x >= 0) {
+            if(board[x][y] == 'Q') {
+                return false;
+            }
+            x--;
+        }
+        // Check left diagonal upward direction
+        x = row, y = col;
+        while(x >= 0 && y >= 0) {
+            if(board[x][y] == 'Q') return false;
+            x--;
+            y--;
+        }
+        // Check right diagonal upward direction
+        x = row, y = col;
+        while(x >= 0 && y < board.size()) {
+            if(board[x][y] == 'Q') return false;
+            x--;
+            y++;
+        }
+        return true;
+    }
+    
+    // Function to record a valid board configuration
+    void recordSolution(vector<vector<char>>& board) {
+        vector<int> configuration;
+        for(int i = 0; i < board.size(); i++) {
+            for(int j = 0; j < board.size(); j++) {
+                if(board[j][i] == 'Q') {
+                    configuration.push_back(j + 1);
+                    break;
+                }
+            }
+        }
+        if(configuration.size() == board.size()) {
+            solutions.push_back(configuration);
+        }
+    }
+
+    // Recursive function to solve the n-queens problem
+    void solveNQueens(vector<vector<char>>& board, int row, int n) {
+        if(row >= n) {
+            recordSolution(board);
+            return;
+        }
+        
+        for(int col = 0; col < board.size(); col++) {
+            if(isSafe(board, row, col)) {
+                board[row][col] = 'Q';
+                solveNQueens(board, row + 1, n);
+                board[row][col] = '-';
+            }
+        }
+    }
+
+    // Main function to find all n-queens solutions
+    vector<vector<int>> findNQueensSolutions(int n) {
+        vector<vector<char>> board(n, vector<char>(n, '-'));
+        solveNQueens(board, 0, n);
+        sort(solutions.begin(), solutions.end());
+        return solutions;
+    }
+};
+
+int main() {
+    int n;
+    cout << "Enter the size of the chessboard: ";
+    cin >> n;
+
+    ChessSolver solver;
+    vector<vector<int>> result = solver.findNQueensSolutions(n);
+
+    cout << "Distinct solutions to the " << n << "-queens puzzle are:\n";
+    for(const auto& solution : result) {
+        for(int pos : solution) {
+            cout << pos << " ";
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
+```
+
+In this code:
+- The class `Solution` has been renamed to `ChessSolver`.
+- The function `nQueen` has been renamed to `findNQueensSolutions`.
+- The function `check` has been renamed to `isSafe`.
+- The function `insertAns` has been renamed to `recordSolution`.
+- The function `solve` has been renamed to `solveNQueens`.
+- The main function takes user input for the size of the chessboard and prints the solutions.
+
+## Editorial: Solving the N-Queens Puzzle
+
+### Intuition
+
+The N-Queens puzzle is a classic problem of placing `n` queens on an `n x n` chessboard such that no two queens threaten each other. This means no two queens can share the same row, column, or diagonal. 
+
+The core intuition is to use backtracking, a method that incrementally builds candidates to the solutions and abandons a candidate as soon as it determines that the candidate cannot possibly lead to a valid solution. Given the constraints, backtracking is an efficient approach because it prunes the search space by discarding invalid configurations early.
+
+### Approach
+
+1. **Backtracking Setup**: We use a recursive function to place queens row by row. We start from the first row and attempt to place a queen in each column of the current row. For each placement, we check if it's valid (i.e., no other queens can attack the current queen).
+
+2. **Validation Check**: For each attempted placement, we need to ensure:
+   - No other queen is in the same column.
+   - No other queen is on the same left diagonal.
+   - No other queen is on the same right diagonal.
+
+3. **Storing Solutions**: Once we place queens in all rows (i.e., reaching the base case of our recursion), we store the current board configuration as a valid solution.
+
+4. **Backtracking Step**: If placing a queen leads to an invalid configuration, we backtrack by removing the queen and trying the next column in the current row.
+
+5. **Result Formatting**: We format the final list of solutions where each solution is represented as a list of integers indicating the row positions of queens in each column.
+
+### Code
+
+Here is the implementation in C++:
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> ans;
+    
+    bool check(vector<vector<char>>& board, int i, int j) {
+        int x = i, y = j;
+        // Check upward direction
+        while(x >= 0) {
+            if(board[x][y] == 'Q') {
+                return false;
+            }
+            x--;
+        }
+        // Check left diagonal upward direction
+        x = i, y = j;
+        while(x >= 0 && y >= 0) {
+            if(board[x][y] == 'Q') return false;
+            x--;
+            y--;
+        }
+        // Check right diagonal upward direction
+        x = i, y = j;
+        while(x >= 0 && y < board.size()) {
+            if(board[x][y] == 'Q') return false;
+            x--;
+            y++;
+        }
+        return true;
+    }
+    
+    void insertAns(vector<vector<char>>& board) {
+        vector<int> row;
+        for(int i = 0; i < board.size(); i++) {
+            for(int j = 0; j < board.size(); j++) {
+                if(board[j][i] == 'Q') {
+                    row.push_back(j + 1);
+                    break;
+                }
+            }
+        }
+        if(row.size() == board.size()) {
+            ans.push_back(row);
+        }
+    }
+
+    void solve(vector<vector<char>>& board, int i, int n) {
+        if(i >= n) {
+            insertAns(board);
+            return;
+        }
+        
+        for(int j = 0; j < board.size(); j++) {
+            if(check(board, i, j)) {
+                board[i][j] = 'Q';
+                solve(board, i + 1, n);
+                board[i][j] = '-';
+            }
+        }
+    }
+
+    vector<vector<int>> nQueen(int n) {
+        vector<vector<char>> board(n, vector<char>(n, '-'));
+        solve(board, 0, n);
+        sort(ans.begin(), ans.end());
+        return ans;
+    }
+};
+```
+
+### Explanation
+
+1. **Initialization**: A `board` of size `n x n` is initialized with all cells marked as empty (`'-'`).
+
+2. **Recursive Backtracking**:
+   - The function `solve` is called starting from the first row.
+   - For each column in the current row, it checks if placing a queen is valid using the `check` function.
+   - If valid, the queen is placed, and the function recursively attempts to place queens in the next row.
+   - If not valid, it tries the next column.
+
+3. **Validation**:
+   - The `check` function ensures no other queens are in the same column or diagonals.
+   - It does so by iterating upwards in the same column and both diagonals to check for any existing queens.
+
+4. **Storing Solutions**:
+   - When all rows are successfully filled with valid queen placements, `insertAns` records the current board configuration as a valid solution.
+   - It translates the board configuration into a list of integers representing the row positions of queens.
+
+5. **Final Output**:
+   - After all valid configurations are found, they are sorted and returned.
+
+This approach ensures that all possible configurations are explored and only valid ones are retained, leveraging the efficiency of backtracking to handle the problem within feasible time constraints for the given input size.
+
+To accomplish the task of generating input files for different test cases (basic, corner, edge, and boundary), running the solution, and storing the output in corresponding files, we need to structure our Python script in the following way:
+
+1. **Generate Test Cases**: Create the input files for all the specified test cases.
+2. **Run the Solution**: Execute the solution script (`solution.py`) with the generated input and capture the output.
+3. **Store the Output**: Save the captured output into corresponding output files.
+
+Let's start by writing the Python script to handle these tasks.
+
+### Step-by-Step Implementation:
+
+1. **Generate Test Cases**:
+    - Basic test cases: Simple and common scenarios.
+    - Corner test cases: Unusual or extreme scenarios.
+    - Edge test cases: Near the boundary of input constraints.
+    - Boundary test cases: Exactly at the boundary of input constraints.
+
+2. **Run the Solution**:
+    - Use `subprocess` to execute the solution script and capture its output.
+
+3. **Store the Output**:
+    - Write the output to the designated files.
+
+Here's the complete Python script:
+
+```python
+import subprocess
+
+# Define the test cases
+test_cases = {
+    "basic": [
+        1,  # Basic test case n=1
+        4,  # Basic test case n=4
+        5,  # Basic test case n=5
+        8   # Basic test case n=8
+    ],
+    "corner": [
+        2,  # Corner case n=2 (no solution)
+        3   # Corner case n=3 (no solution)
+    ],
+    "edge": [
+        10,  # Edge case n=10
+        11   # Edge case n=11
+    ],
+    "boundary": [
+        100000,  # Boundary case n=100000
+        99999    # Boundary case n=99999
+    ]
+}
+
+# Generate input files
+def generate_input_files():
+    for case_type, cases in test_cases.items():
+        for i, case in enumerate(cases, start=1):
+            filename = f"{case_type}_input_{i}.txt"
+            with open(filename, "w") as f:
+                f.write(str(case))
+
+# Run solution.py and capture the output
+def run_solution(input_file):
+    result = subprocess.run(['python3', 'solution.py'], input=open(input_file, "r"), text=True, capture_output=True)
+    return result.stdout
+
+# Store the output in corresponding files
+def store_output_files():
+    for case_type, cases in test_cases.items():
+        for i, case in enumerate(cases, start=1):
+            input_filename = f"{case_type}_input_{i}.txt"
+            output_filename = f"{case_type}_output_{i}.txt"
+            output = run_solution(input_filename)
+            with open(output_filename, "w") as f:
+                f.write(output)
+
+# Main execution
+if __name__ == "__main__":
+    generate_input_files()
+    store_output_files()
+```
+
+### Explanation:
+
+1. **Test Cases Definition**:
+   - The `test_cases` dictionary stores the different cases categorized into `basic`, `corner`, `edge`, and `boundary`.
+
+2. **Generate Input Files**:
+   - The `generate_input_files` function iterates over the test cases and writes each case to a corresponding input file.
+
+3. **Run Solution**:
+   - The `run_solution` function uses `subprocess.run` to execute `solution.py` with the provided input file and capture the output.
+
+4. **Store Output Files**:
+   - The `store_output_files` function reads each input file, runs the solution, and writes the output to the corresponding output file.
+
+### Note:
+- Ensure the `solution.py` script is in the same directory as this script.
+- The `solution.py` should be adjusted to read from `stdin` if it currently reads from a file.
+
+This script automates the creation of test cases, execution of the solution, and storage of outputs, which is essential for thorough testing and validation of the solution.

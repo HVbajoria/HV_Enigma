@@ -1,0 +1,237 @@
+id: template_chat_flow
+name: Template Chat Flow
+environment:
+  python_requirements_txt: requirements.txt
+inputs:
+  chat_history:
+    type: list
+    is_chat_input: false
+    is_chat_history: true
+  question:
+    type: string
+    is_chat_input: true
+    default: The n-queens puzzle is the problem of placing n queens on a (n×n)
+      chessboard such that no two queens can attack each other. Given an integer
+      n, find all distinct solutions to the n-queens puzzle. Each solution
+      contains distinct board configurations of the n-queens placement, where
+      the solutions are a permutation of [1,2,3..n] in increasing order, here
+      the number in the ith place denotes that the ith-column queen is placed in
+      the row with that number. For eg below figure represents a chessboard [3 1
+      4 2].
+  story:
+    type: string
+    default: Avantika is playing chess with Srey and wants t win. help her
+    is_chat_input: false
+  code:
+    type: string
+    default: |-
+      class Solution{
+      public:
+
+          vector<vector<int>> ans;
+          
+          bool check(vector<vector<char>>& board , int i , int j){
+              int x = i , y = j;
+              // up
+              while(x >= 0){
+                  if(board[x][y] == 'Q'){
+                      return false;
+                  }
+                  x--;
+              }
+              // left diag up
+              x = i;
+              while(x >= 0 && y >= 0){
+                  if(board[x][y] == 'Q') return false;
+                  x--;
+                  y--;
+              }
+              // right diag up
+              x = i , y = j;
+              while(x >= 0 && y < board.size()){
+                  if(board[x][y] == 'Q') return false;
+                  x--;
+                  y++;
+              }
+              return true;
+          }
+          
+          void insertAns(vector<vector<char>>& board){
+              vector<int> row;
+              for(int i=0;i<board.size();i++){
+                  for(int j=0;j<board.size();j++){
+                      if(board[j][i] == 'Q'){
+                          row.push_back(j+1);
+                          break;
+                      }
+                  }
+              }
+              if(row.size() == board.size()){
+                  ans.push_back(row);
+              }
+          }
+
+
+          void solve(vector<vector<char>> &board , int i , int n){
+              if(i >= n){
+                  insertAns(board);
+                  return;
+              }
+              
+              for(int j=0;j<board.size();j++){
+                  if(check(board,i,j)){
+                      board[i][j] = 'Q';
+                      solve(board,i+1,n);
+                      board[i][j] = '-';
+                  }
+              }
+              
+          }
+
+          vector<vector<int>> nQueen(int n) {
+              vector<vector<char>> board(n,vector<char>(n,'-'));
+              solve(board,0,n);
+              sort(ans.begin(),ans.end());
+              return ans;
+          }
+      };
+    is_chat_input: false
+outputs:
+  answer:
+    type: string
+    reference: ${FInal.output}
+    is_chat_output: true
+nodes:
+- name: Question
+  type: prompt
+  source:
+    type: code
+    path: Question.jinja2
+  inputs:
+    code: ${inputs.code}
+    question: ${inputs.question}
+    story: ${inputs.story}
+  use_variants: false
+- name: result
+  type: llm
+  source:
+    type: code
+    path: result.jinja2
+  inputs:
+    deployment_name: Enginma_Engine
+    temperature: 0.65
+    top_p: 1
+    response_format:
+      type: text
+    ques: ${Question.output}
+  connection: open_ai_connection
+  api: chat
+  use_variants: false
+- name: Code
+  type: prompt
+  source:
+    type: code
+    path: Code.jinja2
+  inputs:
+    code: ${result.output}
+  use_variants: false
+- name: code_gen
+  type: llm
+  source:
+    type: code
+    path: code_gen.jinja2
+  inputs:
+    deployment_name: Enginma_Engine
+    temperature: 0.5
+    top_p: 1
+    response_format:
+      type: text
+    ask: ${Code.output}
+  connection: open_ai_connection
+  api: chat
+  use_variants: false
+- name: editorial
+  type: prompt
+  source:
+    type: code
+    path: editorial.jinja2
+  inputs:
+    question: ${result.output}
+  use_variants: false
+- name: editorial_gen
+  type: llm
+  source:
+    type: code
+    path: editorial_gen.jinja2
+  inputs:
+    deployment_name: Enginma_Engine
+    temperature: 0.6
+    top_p: 1
+    response_format:
+      type: text
+    problem: ${editorial.output}
+  connection: open_ai_connection
+  api: chat
+  use_variants: false
+- name: Testcase
+  type: prompt
+  source:
+    type: code
+    path: Testcase.jinja2
+  inputs:
+    question: ${result.output}
+  use_variants: false
+- name: Testcase_gen
+  type: llm
+  source:
+    type: code
+    path: Testcase_gen.jinja2
+  inputs:
+    deployment_name: Enginma_Engine
+    temperature: 0.6
+    top_p: 1
+    question: ${Testcase.output}
+  connection: open_ai_connection
+  api: chat
+  use_variants: false
+- name: testcase_rectifier
+  type: prompt
+  source:
+    type: code
+    path: testcase_rectifier.jinja2
+  inputs: {}
+- name: question_name
+  type: prompt
+  source:
+    type: code
+    path: question_name.jinja2
+  inputs:
+    problem: ${result.output}
+  use_variants: false
+- name: question_gen
+  type: llm
+  source:
+    type: code
+    path: question_gen.jinja2
+  inputs:
+    deployment_name: Enginma_Engine
+    temperature: 0.6
+    top_p: 1
+    response_format:
+      type: text
+    question: ${question_name.output}
+  connection: open_ai_connection
+  api: chat
+  use_variants: false
+- name: FInal
+  type: python
+  source:
+    type: code
+    path: FInal.py
+  inputs:
+    input1: ${result.output}
+    input2: ${code_gen.output}
+    input3: ${editorial_gen.output}
+    input4: ${Testcase_gen.output}
+    input5: ${question_gen.output}
+  use_variants: false

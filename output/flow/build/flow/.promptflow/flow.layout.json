@@ -1,0 +1,85 @@
+{
+  "orientation": "Vertical",
+  "nodeLayouts": {
+    "inputs": {
+      "x": 620,
+      "y": 42,
+      "index": -1
+    },
+    "outputs": {
+      "x": 385,
+      "y": 846,
+      "index": -1
+    },
+    "Question": {
+      "x": 470,
+      "y": 176,
+      "index": 0
+    },
+    "result": {
+      "x": 470,
+      "y": 310,
+      "index": 1
+    },
+    "Code": {
+      "x": 140,
+      "y": 444,
+      "index": 2
+    },
+    "code_gen": {
+      "x": 140,
+      "y": 578,
+      "index": 3
+    },
+    "editorial": {
+      "x": 470,
+      "y": 444,
+      "index": 4
+    },
+    "editorial_gen": {
+      "x": 470,
+      "y": 578,
+      "index": 5
+    },
+    "Testcase": {
+      "x": 800,
+      "y": 444,
+      "index": 6
+    },
+    "Testcase_gen": {
+      "x": 800,
+      "y": 578,
+      "index": 7
+    },
+    "question_name": {
+      "x": 1130,
+      "y": 444,
+      "index": 9
+    },
+    "question_gen": {
+      "x": 1130,
+      "y": 578,
+      "index": 10
+    },
+    "FInal": {
+      "x": 305,
+      "y": 712,
+      "index": 11
+    },
+    "testcase_rectifier": {
+      "x": 800,
+      "y": 42,
+      "index": 8
+    }
+  },
+  "viewport": {
+    "transformMatrix": [
+      0.39230354709012544,
+      0,
+      0,
+      0.39230354709012544,
+      -19.207642565081507,
+      23.334367454613965
+    ]
+  }
+}

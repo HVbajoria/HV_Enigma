@@ -1,0 +1,161 @@
+id: template_chat_flow
+name: Template Chat Flow
+environment:
+  python_requirements_txt: requirements.txt
+inputs:
+  chat_history:
+    type: list
+    is_chat_input: false
+    is_chat_history: true
+  question:
+    type: string
+    is_chat_input: true
+    default: The first line of the input contains a single integer n – the number of
+      books. The second line of the input contains n integers a1, a2, …, an –
+      the height of the books where ai represents the height of the ith book
+      from the left.
+  story:
+    type: string
+    default: Manish wants to get to the land of chocolates and gain as much as
+      chocolates as he can
+    is_chat_input: false
+  code:
+    type: string
+    default: "#include <bits/stdc++.h> using namespace std; int main() { int n;
+      cin>>n; vector<int> a; for(int i=0;i<n;i++){ int x; cin>>x; auto
+      it=lower_bound(a.begin(),a.end(),x); if(it==a.end()){ a.push_back(x);
+      }else{ a[it-a.begin()]=x; } } cout<<a.size()<<endl; return 0; }"
+    is_chat_input: false
+outputs:
+  answer:
+    type: string
+    reference: ${FInal.output}
+    is_chat_output: true
+nodes:
+- name: Question
+  type: prompt
+  source:
+    type: code
+    path: Question.jinja2
+  inputs:
+    code: ${inputs.code}
+    question: ${inputs.question}
+    story: ${inputs.story}
+  use_variants: false
+- name: result
+  type: llm
+  source:
+    type: code
+    path: result.jinja2
+  inputs:
+    deployment_name: Enginma_Engine
+    temperature: 0.65
+    top_p: 1
+    response_format:
+      type: text
+    ques: ${Question.output}
+  connection: azure_open_ai
+  api: chat
+  use_variants: false
+- name: Code
+  type: prompt
+  source:
+    type: code
+    path: Code.jinja2
+  inputs:
+    code: ${result.output}
+  use_variants: false
+- name: code_gen
+  type: llm
+  source:
+    type: code
+    path: code_gen.jinja2
+  inputs:
+    deployment_name: Enginma_Engine
+    temperature: 0.5
+    top_p: 1
+    response_format:
+      type: text
+    ask: ${Code.output}
+  connection: azure_open_ai
+  api: chat
+  use_variants: false
+- name: editorial
+  type: prompt
+  source:
+    type: code
+    path: editorial.jinja2
+  inputs:
+    question: ${result.output}
+  use_variants: false
+- name: editorial_gen
+  type: llm
+  source:
+    type: code
+    path: editorial_gen.jinja2
+  inputs:
+    deployment_name: Enginma_Engine
+    temperature: 0.6
+    top_p: 1
+    response_format:
+      type: text
+    problem: ${editorial.output}
+  connection: azure_open_ai
+  api: chat
+  use_variants: false
+- name: Testcase
+  type: prompt
+  source:
+    type: code
+    path: Testcase.jinja2
+  inputs:
+    question: ${result.output}
+  use_variants: false
+- name: Testcase_gen
+  type: llm
+  source:
+    type: code
+    path: Testcase_gen.jinja2
+  inputs:
+    deployment_name: Enginma_Engine
+    temperature: 0.6
+    top_p: 1
+    question: ${Testcase.output}
+  connection: azure_open_ai
+  api: chat
+  use_variants: false
+- name: question_name
+  type: prompt
+  source:
+    type: code
+    path: question_name.jinja2
+  inputs:
+    problem: ${result.output}
+  use_variants: false
+- name: question_gen
+  type: llm
+  source:
+    type: code
+    path: question_gen.jinja2
+  inputs:
+    deployment_name: Enginma_Engine
+    temperature: 0.6
+    top_p: 1
+    response_format:
+      type: text
+    question: ${question_name.output}
+  connection: azure_open_ai
+  api: chat
+  use_variants: false
+- name: FInal
+  type: python
+  source:
+    type: code
+    path: FInal.py
+  inputs:
+    input1: ${result.output}
+    input2: ${code_gen.output}
+    input3: ${editorial_gen.output}
+    input4: ${Testcase_gen.output}
+    input5: ${question_gen.output}
+  use_variants: false
