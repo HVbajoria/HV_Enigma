@@ -23,7 +23,7 @@ from promptflow.client import load_flow
 def run_command():
     command = [
         "pf", "connection", "create",
-        "--file", "/workspaces/HV_Enigma/output/flow/azure_openai.yaml",
+        "--file", "/mount/src/hv_enigma/output/flow/azure_openai.yaml",
         "--set", "api_key=498b28b13a51434ab7c614bd4d961f20",
         "api_base=https://enigmaengine.openai.azure.com/",
         "--name", "azure_open_ai"
@@ -100,7 +100,7 @@ def start():
             dump_flow_result(flow_folder=dump_path, flow_result=response, prefix="chat")
         
         # Save the output to a .txt file
-        with open("/workspaces/HV_Enigma/output/hvenigma.txt", "w") as f:
+        with open("/mount/src/hv_enigma/output/hvenigma.txt", "w") as f:
             f.write(json.dumps(resolved_outputs, indent=4))
         
         return resolved_outputs
@@ -274,7 +274,7 @@ def start():
         return buffer
     
     # Read the .txt file, format the content, and save it as a .docx file
-    with open("/workspaces/HV_Enigma/output/hvenigma.txt", "r") as file:
+    with open("/mount/src/hv_enigma/output/hvenigma.txt", "r") as file:
         file_content = file.read()
         file_content = file_content.replace("\\n", "\n").replace("\\t", "\t")
         file_content = file_content.replace("\\\"", "\"").replace("\\'", "'")
@@ -300,7 +300,7 @@ def start():
         )
 
     # # Add a download button for the output file
-    # with open("/workspaces/HV_Enigma/output/hvenigma.txt", "rb") as file:
+    # with open("/mount/src/hv_enigma/output/hvenigma.txt", "rb") as file:
     #     # format the data to a visually appealing format as it is in markdown and contains \n and \t which should be replaced with actual new line and tabs.
     #     file = file.read().decode("utf-8")
     #     file = file.replace("\\n", "\n").replace("\\t", "\t")

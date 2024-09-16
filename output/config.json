@@ -14,7 +14,7 @@
             "string"
         ]
     },
-    "flow_path": "//workspaces/HV_Enigma//output/flow/flow.dag.yaml",
+    "flow_path": "//mount/src/hv_enigma//output/flow/flow.dag.yaml",
     "is_chat_flow": true,
     "chat_history_input_name": "chat_history",
     "label": "Chat",
